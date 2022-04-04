@@ -62,12 +62,10 @@ def a_star(start, goal, board_dict, n):
             break
 
         neighbors = []
-        neighbors.append((cur[0] - 1, cur[1]))
-        neighbors.append((cur[0] + 1, cur[1]))
-        neighbors.append((cur[0], cur[1] - 1))
-        neighbors.append((cur[0], cur[1] + 1))
-        neighbors.append((cur[0] - 1, cur[1] + 1))
-        neighbors.append((cur[0] + 1, cur[1] - 1))
+        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, 1), (1, -1)]:
+            neighbors.append( (cur[0] + new_position[0], cur[1] + new_position[1]))
+
+
         neighbors = [c for c in neighbors if c[0] >= 0 and c[0] < n and c[1] >= 0 and c[1] < n]
         for neighbor in neighbors:
             if neighbor not in board_dict:
