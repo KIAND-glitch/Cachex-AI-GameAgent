@@ -5,8 +5,6 @@ from random import choice
 from random_agent.board import Board
 
 
-RED = 1
-BLUE = 2
 
 class Player:
     def __init__(self, player, n):
@@ -19,7 +17,7 @@ class Player:
         as Blue.
         """
         self.n = n
-        self.player = RED if player == "red" else BLUE
+        self.player = player
         # n x n array for state
         self.board = Board(n)
 
@@ -59,8 +57,8 @@ class Player:
         if action[0] == "STEAL":
             for i in range(self.n):
                 for j in range(self.n):
-                    if self.state[i][j] != 0:
-                        self.state[i][j] = BLUE
+                    if self.board.is_occupied((i, j)):
+                        self.board.__setitem__((i,j), player)
 
         if action[0] == "PLACE":
             self.board.place(player, action[1:])
