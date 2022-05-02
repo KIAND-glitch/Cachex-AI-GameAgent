@@ -1,10 +1,12 @@
 
 
+
 from numpy import count_nonzero
-from random import choice
-from random_agent.board import Board
+from minimax.board import Board
+from minimax.evaluation import evaluation
 
-
+_TOKEN_MAP_OUT = { 0: None, 1: "red", 2: "blue" }
+_TOKEN_MAP_IN = {v: k for k, v in _TOKEN_MAP_OUT.items()}
 
 class Player:
     def __init__(self, player, n):
@@ -35,11 +37,19 @@ class Player:
                     action_space.append((i, j))
         if count_nonzero(self.board._data) == 0 and self.n % 2 == 1:
             action_space.remove((self.n // 2, self.n // 2))
-        # randomly choose action
-        action = choice(action_space)
-        
+            
+        best_score = float('-inf')
+        best_action = None
+        player = _TOKEN_MAP_IN[self.player]
+        print(self.board._data)
+        for action in action_space:
+            score = evaluation(self.board._data, self.n, player, action)
+            print(action, score)
+            if score > best_score:
+                best_score = score
+                best_action = action
         # ignore steal for now
-        return ("PLACE", action[0], action[1])
+        return ("PLACE", best_action[0], best_action[1])
 
 
 
@@ -63,4 +73,5 @@ class Player:
                         self.board.__setitem__((i,j), player)
 
         if action[0] == "PLACE":
+
             self.board.place(player, action[1:])
