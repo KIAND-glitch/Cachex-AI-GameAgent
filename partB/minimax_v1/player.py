@@ -41,10 +41,8 @@ class Player:
         best_score = float('-inf')
         best_action = None
         player = _TOKEN_MAP_IN[self.player]
-        print(self.board._data)
         for action in action_space:
             score = evaluation(self.board._data, self.n, player, action)
-            print(action, score)
             if score > best_score:
                 best_score = score
                 best_action = action
