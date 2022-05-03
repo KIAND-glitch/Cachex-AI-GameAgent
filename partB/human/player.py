@@ -1,8 +1,4 @@
-
-
-from numpy import count_nonzero
-from random import choice
-from random_agent.board import Board
+from human.board import Board
 
 
 
@@ -27,19 +23,10 @@ class Player:
         Called at the beginning of your turn. Based on the current state
         of the game, select an action to play.
         """
-        action_space = []
-        # add every empty node to action space
-        for i in range(self.n):
-            for j in range(self.n):
-                if not self.board.is_occupied((i, j)):
-                    action_space.append((i, j))
-        if count_nonzero(self.board._data) == 0 and self.n % 2 == 1:
-            action_space.remove((self.n // 2, self.n // 2))
-        # randomly choose action
-        action = choice(action_space)
+        row = input("row:")
+        col = input("col:")
+        return ("PLACE", int(row), int(col))
         
-        # ignore steal for now
-        return ("PLACE", action[0], action[1])
 
 
 
