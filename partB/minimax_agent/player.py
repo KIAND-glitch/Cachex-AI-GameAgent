@@ -1,10 +1,10 @@
 
-from numpy import count_nonzero
+
 import numpy as np
 from minimax_agent.board import Board
 from minimax_agent.evaluation import evaluation
-from minimax_agent.minmax import minmax_decision
-from copy import deepcopy
+from minimax_agent.minimax import minimax
+from random import choice
 
 _TOKEN_MAP_OUT = { 0: None, 1: "red", 2: "blue" }
 _TOKEN_MAP_IN = {v: k for k, v in _TOKEN_MAP_OUT.items()}
@@ -35,24 +35,16 @@ class Player:
         Called at the beginning of your turn. Based on the current state
         of the game, select an action to play.
         """
-        action_space = []
-        # add every empty node to action space
-        for i in range(self.n):
-            for j in range(self.n):
-                if not self.board.is_occupied((i, j)):
-                    action_space.append((i, j))
-        if count_nonzero(self.board._data) == 0 and self.n % 2 == 1:
-            action_space.remove((self.n // 2, self.n // 2))
-
-        best_score = float('-inf')
+        action_space = self.board.get_actions()
         best_action = None
-        player = _TOKEN_MAP_IN[self.player]
-        # for action in action_space:
-        #     score = evaluation(self.board._data, self.n, player, action)
-        #     if score > best_score:
-        #         best_score = score
-        #         best_action = action
-        minmax_decision(self.board._data, self.n, player)
+        best_score = -np.inf
+        for action in action_space:
+            
+            score = minimax(self.board, action, 2, False, self.player)
+            print(action, score)
+            if score > best_score:
+                best_action = action
+                best_score = score
         # ignore steal for now
         return ("PLACE", best_action[0], best_action[1])
 

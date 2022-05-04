@@ -3,6 +3,9 @@ from queue import PriorityQueue
 
 _SWAP_PLAYER = { 0: 0, 1: 2, 2: 1 }
 
+_TOKEN_MAP_OUT = { 0: None, 1: "red", 2: "blue" }
+_TOKEN_MAP_IN = {v: k for k, v in _TOKEN_MAP_OUT.items()}
+
 def h_score(cord1, cord2):
     if cord1 == cord2:
         return 0
@@ -55,24 +58,24 @@ def a_star(start, goal, board, n, opponent):
     output.reverse()
     return output
 
-def evaluation(state, n, player, action):
+def evaluation(board, n, player):
     min_player_len = float('inf')
     min_opponent_len = float('inf')
-    board = deepcopy(state)
-    board[action[0]][action[1]] = player
+
     for i in range(n):
         for j in range(n):
-            if player == 1:
+            if player == 'red':
                 player_path = a_star((0, i), (n-1, j), board, n, 2)
                 opponent_path = a_star((i, 0), (j, n-1), board, n, 1)
             else:
                 player_path = a_star((i, 0), (j, n-1), board, n, 1)
                 opponent_path = a_star((0, i), (n-1, j), board, n, 2)
             if not player_path == []:
-                player_len = len([p for p in player_path if not board[p[0]][p[1]] == player])
+                player_len = len([p for p in player_path if not board[p[0]][p[1]] == _TOKEN_MAP_IN[player]])
                 min_player_len = min(min_player_len, player_len)
             if not opponent_path == []:
-                opponent_len = len([p for p in opponent_path if not board[p[0]][p[1]] == _SWAP_PLAYER[player]])
+                opponent_len = len([p for p in opponent_path if not board[p[0]][p[1]] == _SWAP_PLAYER[_TOKEN_MAP_IN[player]]])
                 min_opponent_len = min(min_opponent_len, opponent_len)
-            
+
+
     return -min_player_len + min_opponent_len

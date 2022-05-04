@@ -13,7 +13,7 @@ representing the state of a game, with respect to your chosen strategy.
 """
 
 from queue import Queue
-from numpy import zeros, array, roll, vectorize
+from numpy import zeros, array, roll, vectorize, count_nonzero
 
 # Utility function to add two coord tuples
 _ADD = lambda a, b: (a[0] + b[0], a[1] + b[1])
@@ -157,3 +157,17 @@ class Board:
         """
         return [_ADD(coord, step) for step in _HEX_STEPS \
             if self.inside_bounds(_ADD(coord, step))]
+
+    def get_actions(self):
+        action_space = []
+        # add every empty node to action space
+        for i in range(self.n):
+            for j in range(self.n):
+                if not self.is_occupied((i, j)):
+                    action_space.append((i, j))
+        if count_nonzero(self._data) == 0 and self.n % 2 == 1:
+            action_space.remove((self.n // 2, self.n // 2))
+        return action_space
+
+    def check_empty(self):
+        return count_nonzero(self._data) == 0
