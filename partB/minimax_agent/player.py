@@ -40,11 +40,13 @@ class Player:
         best_score = -np.inf
         for action in action_space:
             
-            score = minimax(self.board, action, 2, False, self.player)
+            score = minimax(self.board, action, 3, False, self.player)
             print(action, score)
             if score > best_score:
                 best_action = action
                 best_score = score
+        if best_score == -np.inf:
+            best_action = choice(action_space)
         # ignore steal for now
         return ("PLACE", best_action[0], best_action[1])
 
