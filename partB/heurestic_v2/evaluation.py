@@ -36,19 +36,20 @@ def shortestPath(input_board, n, player, row, column):
                 min_btm = board[0][i]
                 min_btm_coord = [n-1,i]
 
-    shortestPath = []
-    min_top_neighbours = board._coordinate_neighbours(min_top_coord)
-    min_btm_neighbours = board._coordinate_neighbours(min_btm_coord)
-    while(min_top >= 0):
-        for neihbour in min_top_neighbours:
-            if board[neighbour] == min_top - 1:
-                shortestPath.append(board[neihbour])
+    # shortestPath = []
+    # min_top_neighbours = board._coordinate_neighbours(min_top_coord)
+    # min_btm_neighbours = board._coordinate_neighbours(min_btm_coord)
+    # while(min_top >= 0):
+    #     for neihbour in min_top_neighbours:
+    #         if board[neighbour] == min_top - 1:
+    #             shortestPath.append(board[neihbour])
 
 
-def getNeighbours(board, degree, row, column):
-    for degree in range(n):
-        neighbours = board._coordinate_neighbours([row, column])
-        assignValue(board, neighbours)
+def getNeighbours(board, n, degree, row, column):
+
+    if degree == 1:
+        board._coordinate_neighbours([row, column])
+
     new_neighbours = []
     for neighbour in neighbours:
         new_neighbour_list = board._coordinate_neighbours(neighbour)
