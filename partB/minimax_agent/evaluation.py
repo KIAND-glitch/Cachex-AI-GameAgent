@@ -57,25 +57,22 @@ def a_star(start, goal, board, n, opponent):
         tmp = parent[tmp]
     output.reverse()
     return output
-
-def evaluation(board, n, player):
-    min_player_len = float('inf')
-    min_opponent_len = float('inf')
+# red+, blue-
+def evaluation(board, n):
+    min_red_len = float('inf')
+    min_blue_len = float('inf')
 
     for i in range(n):
         for j in range(n):
-            if player == 'red':
-                player_path = a_star((0, i), (n-1, j), board, n, 2)
-                opponent_path = a_star((i, 0), (j, n-1), board, n, 1)
-            else:
-                player_path = a_star((i, 0), (j, n-1), board, n, 1)
-                opponent_path = a_star((0, i), (n-1, j), board, n, 2)
-            if not player_path == []:
-                player_len = len([p for p in player_path if not board[p[0]][p[1]] == _TOKEN_MAP_IN[player]])
-                min_player_len = min(min_player_len, player_len)
-            if not opponent_path == []:
-                opponent_len = len([p for p in opponent_path if not board[p[0]][p[1]] == _SWAP_PLAYER[_TOKEN_MAP_IN[player]]])
-                min_opponent_len = min(min_opponent_len, opponent_len)
+            red_path = a_star((0, i), (n-1, j), board, n, 2)
+            blue_path = a_star((i, 0), (j, n-1), board, n, 1)
 
+            if not red_path == []:
+                red_len = len([p for p in red_path if not board[p[0]][p[1]] == _TOKEN_MAP_IN['red']])
+                min_red_len = min(min_red_len, red_len)
+            if not blue_path == []:
+                blue_len = len([p for p in blue_path if not board[p[0]][p[1]] == _TOKEN_MAP_IN['blue']])
+                min_blue_len = min(min_blue_len, blue_len)
 
-    return -min_player_len + min_opponent_len
+    score = -min_red_len + min_blue_len
+    return score

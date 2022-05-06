@@ -1,8 +1,9 @@
 
 
+from copy import deepcopy
 import numpy as np
 from minimax_agent.board import Board
-from minimax_agent.evaluation import evaluation
+
 from minimax_agent.minimax import minimax
 from random import choice
 
@@ -37,16 +38,29 @@ class Player:
         """
         action_space = self.board.get_actions()
         best_action = None
-        best_score = -np.inf
+
+        if self.player == "red":
+            best_score = -np.inf
+        else:
+            best_score = np.inf
+
         for action in action_space:
-            
-            score = minimax(self.board, action, 3, False, self.player)
+            board_copy = deepcopy(self.board)
+            board_copy.place(self.player, action)
+            score = minimax(board_copy, action, 3, self.player)
             print(action, score)
-            if score > best_score:
-                best_action = action
-                best_score = score
-        if best_score == -np.inf:
-            best_action = choice(action_space)
+            if self.player == "red":
+                if score > best_score:
+                    best_action = action
+                    best_score = score
+                if best_score == -np.inf:
+                    best_action = choice(action_space)
+            else:
+                if score < best_score:
+                    best_action = action
+                    best_score = score
+                if best_score == np.inf:
+                    best_action = choice(action_space)
         # ignore steal for now
         return ("PLACE", best_action[0], best_action[1])
 
