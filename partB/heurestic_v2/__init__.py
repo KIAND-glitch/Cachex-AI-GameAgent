@@ -5,4 +5,4 @@
 # example import below, you can define it in another file and import
 # it into this module with the name 'Player':
 
-from heurestic_v1.player import Player
+from heurestic_v2.player import Player

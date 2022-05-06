@@ -1,5 +1,6 @@
 from copy import deepcopy
 import numpy as np
+from heurestic_v2.board import Board
 
 _SWAP_PLAYER = { 0: 0, 1: 2, 2: 1 }
 

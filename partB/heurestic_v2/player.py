@@ -2,8 +2,8 @@
 
 
 from numpy import count_nonzero
-from heurestic_v1.board import Board
-from heurestic_v1.evaluation import evaluation
+from heurestic_v2.board import Board
+from heurestic_v2.evaluation import evaluation
 
 _TOKEN_MAP_OUT = { 0: None, 1: "red", 2: "blue" }
 _TOKEN_MAP_IN = {v: k for k, v in _TOKEN_MAP_OUT.items()}
@@ -42,7 +42,7 @@ class Player:
         best_action = None
         player = _TOKEN_MAP_IN[self.player]
         for action in action_space:
-            score = evaluation(self.board._data, self.n, player, action)
+            score = evaluation(self.board._data, self.n, player)
             if score > best_score:
                 best_score = score
                 best_action = action
