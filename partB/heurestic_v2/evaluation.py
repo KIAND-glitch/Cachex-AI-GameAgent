@@ -48,9 +48,10 @@ def shortestPath(input_board, n, player, row, column):
 def getNeighbours(board, degree, row, column):
 
     if degree == 1:
-        board._coordinate_neighbours([row, column])
+        return board._coordinate_neighbours([row, column])
 
     new_neighbours = []
+    neighbours =  getNeighbours(board, degree - 1, row, column)
     for neighbour in neighbours:
         new_neighbour_list = board._coordinate_neighbours(neighbour)
         for new_neighbour in new_neighbour_list:
@@ -58,7 +59,7 @@ def getNeighbours(board, degree, row, column):
                 new_neighbours.append(new_neighbour)
 
 
-def assignValue(board, neighbours, player,radius):
+def assignValue(board, neighbours, player, radius):
     for neighbour in neighbours:
         if board[neighbour] == player:
             board = radius - 1
