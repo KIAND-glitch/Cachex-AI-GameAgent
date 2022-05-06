@@ -1,5 +1,6 @@
 from copy import deepcopy
 import numpy as np
+from heurestic_v2.board import Board
 
 _SWAP_PLAYER = { 0: 0, 1: 2, 2: 1 }
 
@@ -7,6 +8,8 @@ _PLAYER_AXIS = {
     "red": 0, # Red aims to form path in r/0 axis
     "blue": 1 # Blue aims to form path in q/1 axis
 }
+
+neighbours = []
 
 def evaluation(input_board, n, player):
     board = deepcopy(input_board)
@@ -17,13 +20,16 @@ def evaluation(input_board, n, player):
             else:
                 board[i][j] = shortestPath(input_board, n, i, j)
 
+    return np.inf
+
 def shortestPath(input_board, n, player, row, column):
     board = deepcopy(input_board)
 
     for degree in range(n):
         neighbours = getNeighbours(board, degree, row, column)
-        if neighbours:
-            assignValue(board, neighbours, player, degree)
+        print(degree, row, column, neighbours)
+        # if neighbours:
+        #     assignValue(board, neighbours, player, degree)
 
     # searches for min value from the winning edges
     # if player == "red":
@@ -57,6 +63,8 @@ def getNeighbours(board, degree, row, column):
         for new_neighbour in new_neighbour_list:
             if new_neighbour not in neighbours:
                 new_neighbours.append(new_neighbour)
+
+    return new_neighbours
 
 
 def assignValue(board, neighbours, player, radius):
