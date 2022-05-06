@@ -23,18 +23,18 @@ def shortestPath(input_board, n, player, row, column):
     for degree in range(n):
         neighbours = getNeighbours(board, degree, row, column)
         if neighbours:
-            assignValue(board, new_neighbours, player, radius)
+            assignValue(board, neighbours, player, degree)
 
-    axis_vals = [coord[_PLAYER_AXIS[player]] for coord in reachable]
-    if player == "red":
-        min_top = np.inf
-        for i in range(n):
-            if board[0][i] < min_top:
-                min_top = board[0][i]
-                min_top_coord = [0,i]
-            if board[n-1][i] < min_btm:
-                min_btm = board[0][i]
-                min_btm_coord = [n-1,i]
+    # searches for min value from the winning edges
+    # if player == "red":
+    #     min_top = np.inf
+    #     for i in range(n):
+    #         if board[0][i] < min_top:
+    #             min_top = board[0][i]
+    #             min_top_coord = [0,i]
+    #         if board[n-1][i] < min_btm:
+    #             min_btm = board[0][i]
+    #             min_btm_coord = [n-1,i]
 
     # shortestPath = []
     # min_top_neighbours = board._coordinate_neighbours(min_top_coord)
@@ -45,7 +45,7 @@ def shortestPath(input_board, n, player, row, column):
     #             shortestPath.append(board[neihbour])
 
 
-def getNeighbours(board, n, degree, row, column):
+def getNeighbours(board, degree, row, column):
 
     if degree == 1:
         board._coordinate_neighbours([row, column])
@@ -57,8 +57,6 @@ def getNeighbours(board, n, degree, row, column):
             if new_neighbour not in neighbours:
                 new_neighbours.append(new_neighbour)
 
-    if new_neighbours:
-        assignValue(board, new_neighbours, player, radius)
 
 def assignValue(board, neighbours, player,radius):
     for neighbour in neighbours:
