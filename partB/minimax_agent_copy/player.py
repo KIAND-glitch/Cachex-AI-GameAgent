@@ -44,10 +44,16 @@ class Player:
         else:
             best_score = np.inf
 
+        print("action space",action_space)
+        if len(action_space) == (self.n * self.n) - 1:
+            best_action = choice(action_space)
+            return ("PLACE", 0, 0)
+
+
         for action in action_space:
             board_copy = deepcopy(self.board)
             board_copy.place(self.player, action)
-            score = minimax(board_copy, action, 3, self.player)
+            score = minimax(board_copy, action, 5, self.player)
             print(action, score)
             if self.player == "red":
                 if score > best_score:

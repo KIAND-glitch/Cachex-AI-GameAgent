@@ -74,5 +74,5 @@ def evaluation(board, n):
                 blue_len = len([p for p in blue_path if not board[p[0]][p[1]] == _TOKEN_MAP_IN['blue']])
                 min_blue_len = min(min_blue_len, blue_len)
 
-    score = -min_red_len + min_blue_len
+    score = (-min_red_len + min_blue_len) # / max(min_blue_len,min_red_len)
     return score
