@@ -64,3 +64,4 @@ class Player:
 
         if action[0] == "PLACE":
             self.board.place(player, action[1:])
+

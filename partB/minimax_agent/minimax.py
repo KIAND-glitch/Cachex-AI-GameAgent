@@ -2,7 +2,6 @@ from numpy import count_nonzero
 import numpy as np
 from copy import deepcopy
 from minimax_agent.evaluation import evaluation
-from minimax_agent.board import Board
 
 _PLAYER_AXIS = {
     "red": 0, # Red aims to form path in r/0 axis
@@ -25,22 +24,28 @@ _SWAP_PLAYER = { "red": "blue", "blue": "red" }
 #             value := min(value, minimax(child, depth − 1, TRUE))
 #         return value
 
-def minimax(board, action, depth, maximizing, player):
+def minimax(board, action, depth, player):
     board_copy = deepcopy(board)
     board_copy.place(player, action)
     if check_terminal_state(board_copy, action, player):
-        return -np.inf if maximizing else np.inf
+        return -np.inf if player == 'blue' else np.inf
     if depth == 0:
-        return evaluation(board_copy._data, board_copy.n, player)
-    if maximizing:
+        return evaluation(board_copy._data, board_copy.n)
+
+    
+    if player == 'blue': # why blue here???
         v = -np.inf
         for a in board_copy.get_actions():
-            v = max(v, minimax(board_copy, a, depth - 1, False, _SWAP_PLAYER[player]))
+            score = minimax(board_copy, a, depth - 1, _SWAP_PLAYER[player])
+
+            v = max(v, score)
         return v
     else:
         v = np.inf
         for a in board_copy.get_actions():
-            v = min(v, minimax(board_copy, a, depth - 1, True, _SWAP_PLAYER[player]))
+            score = minimax(board_copy, a, depth - 1, _SWAP_PLAYER[player])
+
+            v = min(v, score)
         return v
 
 def check_terminal_state(board, action, player):

@@ -2,9 +2,9 @@
 
 from copy import deepcopy
 import numpy as np
-from minimax_agent_copy.board import Board
+from minimax_agent_v2.board import Board
 
-from minimax_agent_copy.minimax import minimax
+from minimax_agent_v2.minimax import minimax
 from random import choice
 
 _TOKEN_MAP_OUT = { 0: None, 1: "red", 2: "blue" }
@@ -44,16 +44,10 @@ class Player:
         else:
             best_score = np.inf
 
-        print("action space",action_space)
-        if len(action_space) == (self.n * self.n) - 1:
-            best_action = choice(action_space)
-            return ("PLACE", 0, 0)
-
-
         for action in action_space:
             board_copy = deepcopy(self.board)
             board_copy.place(self.player, action)
-            score = minimax(board_copy, action, 5, self.player)
+            score = minimax(board_copy, action, 2, self.player)
             print(action, score)
             if self.player == "red":
                 if score > best_score:

@@ -1,7 +1,6 @@
 """
 Provide a class to maintain the state of a Cachex game board, including
 some helper methods to assist in updating and searching the board.
-
 NOTE:
 This board representation is designed to be used internally by the referee
 for the purposes of validating actions and displaying the result of the game.

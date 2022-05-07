@@ -1,7 +1,7 @@
 from numpy import count_nonzero
 import numpy as np
 from copy import deepcopy
-from minimax_agent_copy.evaluation import evaluation
+from minimax_agent_v2.evaluation import get_difference, get_longest_component, get_score
 
 _PLAYER_AXIS = {
     "red": 0, # Red aims to form path in r/0 axis
@@ -30,7 +30,7 @@ def minimax(board, action, depth, player):
     if check_terminal_state(board_copy, action, player):
         return -np.inf if player == 'blue' else np.inf
     if depth == 0:
-        return evaluation(board_copy._data, board_copy.n)
+        return get_score(board_copy, action, player)
 
     
     if player == 'blue': # why blue here???
@@ -40,6 +40,7 @@ def minimax(board, action, depth, player):
 
             v = max(v, score)
         return v
+        
     else:
         v = np.inf
         for a in board_copy.get_actions():
