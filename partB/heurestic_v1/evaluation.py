@@ -74,4 +74,4 @@ def evaluation(input_board, n, player, action):
                 opponent_len = len([p for p in opponent_path if not board[p[0]][p[1]] == _SWAP_PLAYER[player]])
                 min_opponent_len = min(min_opponent_len, opponent_len)
             
-    return -min_player_len + min_opponent_len
+    return -min_player_len + min_opponent_len #/ max(min_player_len, min_opponent_len)
