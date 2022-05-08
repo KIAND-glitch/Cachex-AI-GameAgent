@@ -21,37 +21,30 @@ def get_difference(board):
     n_blue = sum(data == 2)
     return n_red - n_blue
 
-def get_longest_component(board, action, player):
-    r, q = action
-    reachable = board.connected_coords((r, q))
-    axis_vals = [coord[_PLAYER_AXIS[player]] for coord in reachable]
-    if player == "red":
-        return max(axis_vals) - min(axis_vals)
-    if player == "blue":
-        return min(axis_vals) - max(axis_vals)
+def get_longest_component_diff(board):
+    max_red = 0
+    max_blue = 0
+    visited = []
+    for r in range(board.n):
+        for q in range(board.n):
+            if (r, q) not in visited:
+                if board._data[r, q] == 0:
+                    continue
+                if board._data[r, q] == 1:
+                    reachable = board.connected_coords((r, q))
+                    axis_vals = [coord[0] for coord in reachable]
+                    max_red = max(max_red, max(axis_vals) - min(axis_vals))
+                if board._data[r, q] == 2:
+                    reachable = board.connected_coords((r, q))
+                    axis_vals = [coord[1] for coord in reachable]
+                    max_blue = max(max_blue, max(axis_vals) - min(axis_vals))
+                visited.extend(reachable)
 
-def get_longest_component_same_line(board, action, player):
-    r, q = action
-    reachable = board.connected_coords((r, q))
-    axis = _PLAYER_AXIS[_SWAP_PLAYER_TOKEN[player]]
-    axis_vals = sorted([coord[axis] for coord in reachable])
-    count = 0
-    max_count = 0
-    current_value = axis_vals[0]
-
-    for val in axis_vals:
-        if val == current_value:
-            count += 1
-        else:
-            current_value = val
-            count = 1
-        max_count = max(max_count, count)
-    return max_count if player == "red" else -max_count
+    return max_red - max_blue
 
 
 
 def get_score(board, action, player):
     feature1 = get_difference(board)
-    feature2 = get_longest_component(board, action, player)
-    feature3 = get_longest_component_same_line(board, action, player)
-    return 0.5*feature1 + 0.2*feature2 + 0.3*feature3
+    feature2 = get_longest_component_diff(board)
+    return feature1 + feature2

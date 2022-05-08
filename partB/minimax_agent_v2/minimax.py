@@ -1,7 +1,7 @@
 from numpy import count_nonzero
 import numpy as np
 from copy import deepcopy
-from minimax_agent_v2.evaluation import get_difference, get_longest_component, get_score
+from minimax_agent_v2.evaluation import get_score
 
 _PLAYER_AXIS = {
     "red": 0, # Red aims to form path in r/0 axis

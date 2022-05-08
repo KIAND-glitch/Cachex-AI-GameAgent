@@ -45,9 +45,8 @@ class Player:
             best_score = np.inf
 
         for action in action_space:
-            score = minimax(self.board, action, 3, self.player, -np.inf, np.inf)
+            score = minimax(self.board, action, 2, self.player, -np.inf, np.inf)
             print(action, score)
-
             captured = self.board.place(self.player, action)
             terminal = check_terminal_state(self.board, action, self.player)
             self.board.revert_action(action, captured)
