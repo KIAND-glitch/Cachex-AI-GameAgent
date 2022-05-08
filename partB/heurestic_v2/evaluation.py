@@ -22,7 +22,7 @@ def evaluation(input_board, n, player):
         for j in range(n):
             print(i,j,input_board.__getitem__((i, j)))
             if input_board.__getitem__((i, j)) != _TOKEN_MAP_OUT[player]:
-                board[i][j] = 100
+                board[i][j] = np.inf
             else:
                 # already_visited = [[i,j]]
                 board[i][j] = shortestPath(input_board, n, player, i, j, )

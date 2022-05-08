@@ -16,3 +16,53 @@ for neighbours from degree 1 to n
     else:
         value = radius
 
+after marking all coord with some distance
+
+we search those smallest numbers on winning border of board. In red player case, they are both top and bottom sides, and in case of blue player they are left and right sides.
+From the set of smallest distance number, we construct the shortest path by searching grids of decreasing distance numbers. If it decrease with exact one, add that coordinate
+into shortest path. If it has exact same distance number but it has player's color piece, also add it into shortest path. The first scan is a linear scan of every grid of board,
+and the second search is also linear because it just searches in circles.
+And in the worst case, every place of board might be done with this kind of search. Therefore the algorithms has a time complexity of N2.
+
+search the top border:
+    find the smallest number on this border
+
+search the btm border:
+    find the smallest number on this border
+
+from the top row:
+    find the smllst number
+    serach teh next row for the same number, if present add it to the shortest path
+    serach the next row for this number - 1, if present add it to the shortest path
+
+        shortest_path = 0
+    # min_top_border = np.inf
+    # for i in range(n):
+    #     if min_top_border > board[n-1][i]:
+    #         min_top_border = board[n-1][i]
+    #
+    # min_btm_border = np.inf
+    # for i in range(n):
+    #     if min_btm_border > board[n-1][i]:
+    #         min_btm_border = board[n-1][i]
+    #
+    # #scan from the btm border
+    # for i in range(1,n):
+    #     for j in range(n):
+    #         if min_btm_border == board[i][j]:
+    #             shortest_path += 1
+    #         if min_btm_border-1 == board[i][j]:
+    #             shortest_path += 1
+    #             min_btm_border -= 1
+    #
+    # for i in range(n-2,-1,-1):
+    #     for j in range(n):
+    #         if min_top_border == board[i][j]:
+    #             shortest_path += 1
+    #         if min_top_border-1 == board[i][j]:
+    #             shortest_path += 1
+    #             min_top_border -= 1
+    #
+    # print(row,column,shortest_path)
+
+
