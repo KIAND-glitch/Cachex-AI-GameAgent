@@ -47,7 +47,7 @@ class Player:
         for action in action_space:
             board_copy = deepcopy(self.board)
             board_copy.place(self.player, action)
-            score = minimax(board_copy, action, 1, self.player)
+            score = minimax(board_copy, action, 2, self.player)
             print(action, score)
             if self.player == "red":
                 if score > best_score:

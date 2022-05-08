@@ -43,6 +43,7 @@ _TOKEN_MAP_IN = {v: k for k, v in _TOKEN_MAP_OUT.items()}
 
 # Map between player token types
 _SWAP_PLAYER = { 0: 0, 1: 2, 2: 1 }
+_SWAP_PLAYER_TOKEN = { 'red': 'blue', 'blue': 'red' }
 
 class Board:
     def __init__(self, n):
@@ -149,6 +150,16 @@ class Board:
             self[coord] = None
 
         return list(captured)
+    
+    def revert_action(self, action, captured):
+        """
+        Revert the last action.
+        """
+        player = self._data[action]
+        self._data[action] = 0
+        for coord in captured:
+            self._data[coord] = _SWAP_PLAYER[player]
+
 
     def _coord_neighbours(self, coord):
         """
