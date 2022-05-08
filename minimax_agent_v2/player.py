@@ -45,27 +45,16 @@ class Player:
             best_score = np.inf
 
         for action in action_space:
-            score = minimax(self.board, action, 3, self.player, -np.inf, np.inf)
+            score = minimax(self.board, action, 2, self.player)
             print(action, score)
 
-            captured = self.board.place(self.player, action)
-            terminal = check_terminal_state(self.board, action, self.player)
-            self.board.revert_action(action, captured)
-
             if self.player == "red":
-                if score == np.inf and terminal:
-                    best_action = action
-                    break
-
                 if score > best_score:
                     best_action = action
                     best_score = score
                 if best_score == -np.inf:
                     best_action = choice(action_space)
             else:
-                if score == -np.inf and terminal:
-                    best_action = action
-                    break
                 if score < best_score:
                     best_action = action
                     best_score = score
@@ -99,11 +88,3 @@ class Player:
             self.board.place(player, action[1:])
 
 
-def check_terminal_state(board, action, player):
-    r, q = action
-    n = board.n
-    reachable = board.connected_coords((r, q))
-    axis_vals = [coord[_PLAYER_AXIS[player]] for coord in reachable]
-    if min(axis_vals) == 0 and max(axis_vals) == n - 1:
-        return True
-    return False
