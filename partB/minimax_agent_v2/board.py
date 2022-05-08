@@ -169,14 +169,17 @@ class Board:
             if self.inside_bounds(_ADD(coord, step))]
 
     def get_actions(self):
-        action_space = []
+        action_space = set()
         # add every empty node to action space
         for i in range(self.n):
             for j in range(self.n):
-                if not self.is_occupied((i, j)):
-                    action_space.append((i, j))
-        if count_nonzero(self._data) == 0 and self.n % 2 == 1:
-            action_space.remove((self.n // 2, self.n // 2))
+                if self.is_occupied((i, j)):
+                    neighbors = self._coord_neighbours((i, j))
+                    for neighbor in neighbors:
+                        if not self.is_occupied(neighbor):
+                            action_space.add(neighbor)
+        if count_nonzero(self._data) == 0:
+            action_space.add((0, 1))
         return action_space
 
     def check_empty(self):

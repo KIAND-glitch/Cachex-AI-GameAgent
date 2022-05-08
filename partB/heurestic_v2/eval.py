@@ -1,6 +1,5 @@
 from copy import deepcopy
 import numpy as np
-from heurestic_v2.board import Board
 
 _SWAP_PLAYER = { 0: 0, 1: 2, 2: 1 }
 
@@ -91,15 +90,8 @@ def shortestPath(ori_board, n, player, row, column):
     shortest_path = 0
 
     if player == 1:
-        min_top_border = np.inf
-        min_btm_border = np.inf
-
-        for i in range(n):
-            if min_top_border > board[n-1][i]:
-                min_top_border = board[n-1][i]
-            if min_btm_border > board[0][i]:
-                min_btm_border = board[0][i]
-
+        min_top_border = board[n-1].min()
+        min_btm_border = board[0].min()
 
         #scan from the btm border
         for i in range(0,row):

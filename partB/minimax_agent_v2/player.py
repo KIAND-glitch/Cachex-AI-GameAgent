@@ -71,7 +71,8 @@ class Player:
                 if best_score == np.inf:
                     best_action = choice(action_space)
         # ignore steal for now
-        return ("PLACE", best_action[0], best_action[1])
+        print(best_action)
+        return ("PLACE", int(best_action[0]), int(best_action[1]))
 
 
 
