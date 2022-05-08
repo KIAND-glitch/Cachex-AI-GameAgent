@@ -4,6 +4,7 @@
 from numpy import count_nonzero
 from heurestic_v2.board import Board
 from heurestic_v2.evaluation import evaluation
+from random import choice
 
 _TOKEN_MAP_OUT = { 0: None, 1: "red", 2: "blue" }
 _TOKEN_MAP_IN = {v: k for k, v in _TOKEN_MAP_OUT.items()}
@@ -37,17 +38,18 @@ class Player:
                     action_space.append((i, j))
         if count_nonzero(self.board._data) == 0 and self.n % 2 == 1:
             action_space.remove((self.n // 2, self.n // 2))
+
+        if len(action_space) == (self.n * self.n) - 1:
+            best_action = choice(action_space)
+            return ("PLACE", best_action[0], best_action[1])
             
         best_score = float('-inf')
-        best_action = None
+
         player = _TOKEN_MAP_IN[self.player]
-        for action in action_space:
-            score = evaluation(self.board._data, self.n, player)
-            if score > best_score:
-                best_score = score
-                best_action = action
+        action = evaluation(self.board, self.n, player)
+
         # ignore steal for now
-        return ("PLACE", best_action[0], best_action[1])
+        return ("PLACE", action[0], action[1])
 
 
 

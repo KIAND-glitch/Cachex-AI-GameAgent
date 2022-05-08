@@ -49,26 +49,7 @@ def get_longest_component_same_line(board, action, player):
     return max_count
 
 
-def get_longest_component_same_line(board, action, player):
-    r, q = action
-    reachable = board.connected_coords((r, q))
-    axis = _PLAYER_AXIS[_SWAP_PLAYER_TOKEN[player]]
-    axis_vals = sorted([coord[axis] for coord in reachable])
-    count = 0
-    max_count = 0
-    current_value = axis_vals[0]
-
-    for val in axis_vals:
-        if val == current_value:
-            count += 1
-        else:
-            current_value = val
-            count = 1
-        max_count = max(max_count, count)
-    return max_count if player == "red" else -max_count
-
-
-
 def get_score(board, action, player):
-
+    #print("difference",get_difference(board),"longest component",get_longest_component(board, action, player),
+          #"same line",get_longest_component_same_line(board, action, player))
     return get_difference(board) + get_longest_component(board, action, player) + get_longest_component_same_line(board, action, player)

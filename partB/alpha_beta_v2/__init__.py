@@ -1,0 +1,1 @@
+from alpha_beta_v2.player import Player

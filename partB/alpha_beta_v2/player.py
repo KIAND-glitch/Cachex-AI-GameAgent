@@ -2,9 +2,9 @@
 
 from copy import deepcopy
 import numpy as np
-from minimax_agent_v2.board import Board
+from alpha_beta_v2.board import Board
 
-from minimax_agent_v2.minimax import minimax
+from alpha_beta_v2.minimax import minimax
 from random import choice
 
 _TOKEN_MAP_OUT = { 0: None, 1: "red", 2: "blue" }
@@ -14,8 +14,6 @@ _PLAYER_AXIS = {
     "red": 0, # Red aims to form path in r/0 axis
     "blue": 1 # Blue aims to form path in q/1 axis
 }
-
-
 
 class Player:
 
@@ -48,10 +46,10 @@ class Player:
 
         if (len(action_space) == (self.n * self.n) - 1) and (self.n % 2 != 0):
             best_action = choice(action_space)
-            return ("PLACE", best_action[0], best_action[1])
+            return ("PLACE", 0, 1)
         elif (len(action_space) == (self.n * self.n)) and (self.n % 2 == 0):
             best_action = choice(action_space)
-            return ("PLACE", best_action[0], best_action[1])
+            return ("PLACE", 0, 1)
 
         if self.player == "red":
             best_score = -np.inf
@@ -59,21 +57,15 @@ class Player:
             best_score = np.inf
 
         for action in action_space:
-            score = minimax(self.board, action, 2, self.player)
+            board_copy = deepcopy(self.board)
+            board_copy.place(self.player, action)
+            score = minimax(board_copy, action, 0, -np.inf, np.inf, self.player)
             print(action, score)
-
             if self.player == "red":
                 if score > best_score:
                     best_action = action
                     best_score = score
                 if best_score == -np.inf:
-
-                    # if self.prev_action is not None:
-                    #     neighbours = board_copy._coord_neighbours(action)
-                    #     for neighbour in neighbours:
-                    #         if not board_copy.is_occupied(neighbour):
-                    #             best_action = neighbour
-                    # else:
                     best_action = choice(action_space)
             else:
                 if score < best_score:

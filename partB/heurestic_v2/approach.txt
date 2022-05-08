@@ -1,0 +1,18 @@
+the shortest path procedure with time complexity of n^2
+
+scan every piece on board:
+if empty or opponent: len of shortest path = infinite
+
+else if players piece:
+    shortest path is calculated by expanding in circles with current piece in centre,
+    using an internal board to record distance of each coord:
+for neighbours from degree 1 to n
+    if players piece is encountered:
+        value = prev_radius
+
+    elif opponent piece is encountered:
+        value = inf
+
+    else:
+        value = radius
+
