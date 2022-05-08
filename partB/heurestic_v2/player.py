@@ -1,6 +1,4 @@
 
-
-
 from numpy import count_nonzero
 from heurestic_v2.board import Board
 from heurestic_v2.eval import shortestPath
@@ -31,6 +29,7 @@ class Player:
         Called at the beginning of your turn. Based on the current state
         of the game, select an action to play.
         """
+
         action_space = []
         # add every empty node to action space
         for i in range(self.n):
@@ -39,16 +38,17 @@ class Player:
                     action_space.append((i, j))
         if count_nonzero(self.board._data) == 0 and self.n % 2 == 1:
             action_space.remove((self.n // 2, self.n // 2))
-            
+
         best_score = float('-inf')
 
         player = _TOKEN_MAP_IN[self.player]
         for action in action_space:
-            score = shortestPath(self.board._data, self.n, player, action[0], action[1])
-
+            score = shortestPath(self.board, self.n, player, action[0], action[1])
+            print(action, score)
             if score > best_score:
                 best_score = score
                 best_action = action
+
 
         if best_score == np.inf:
             best_action = choice(action_space)

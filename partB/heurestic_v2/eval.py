@@ -12,8 +12,6 @@ _PLAYER_AXIS = {
 _TOKEN_MAP_OUT = { 0: None, 1: "red", 2: "blue" }
 _TOKEN_MAP_IN = {v: k for k, v in _TOKEN_MAP_OUT.items()}
 
-global_neighbours = []
-
 # def evaluation(original_board, n, player, action):
 #     print("original board\n",original_board)
 #     board = deepcopy(original_board)
@@ -38,65 +36,132 @@ global_neighbours = []
 #
 #     return (min_row, min_col)
 
+def shortestPath(ori_board, n, player, row, column):
 
-def shortestPath(original_board, n, player, row, column):
-    #print("shortest path")
+
+    original_board = deepcopy(ori_board)
+    action = (row,column)
+    original_board.place(_TOKEN_MAP_OUT[player], action)
+    original_board = original_board._data
     board = deepcopy(original_board)
-    board[row][column] = 1
+    board[row][column] = player
     already_visited = [(row, column)]
-    for degree in range(1, n):
-        #print("already visited", already_visited)
+
+    for degree in range(1, 2*n):
         neighbours = getNeighbours(n, degree, row, column, already_visited)
 
         for neighbour in neighbours:
             if neighbour not in already_visited:
                 already_visited.append(neighbour)
 
-        #print(degree, row, column, neighbours)
-
         if neighbours:
             assignValue(original_board, board, neighbours, player, degree+1)
 
     print("shortest path board\n",board)
 
-    min_top_coord = 0
-    min_btm_coord = 0
-    min_top = np.inf
-    min_btm = np.inf
-    print(player)
-    #searches for min value from the winning edges
+    # min_top_coord = 0
+    # min_btm_coord = 0
+    # min_top = np.inf
+    # min_btm = np.inf
+    # #searches for min value from the winning edges
+    #
+    # for i in range(n):
+    #     if board[0][i] < min_btm and board[0][i] != 0:
+    #         min_btm = board[0][i]
+    #         min_btm_coord = i
+    #     if board[n-1][i] < min_top and board[n-1][i] != 0:
+    #         min_top = board[n-1][i]
+    #         min_top_coord = i
+    #
+    # shortestPath = []
+    # min_top_neighbours = getCoordNeighbours(n, n-1, min_top_coord)
+    # min_btm_neighbours = getCoordNeighbours(n, 0, min_btm_coord)
+    # while(min_top >= 1):
+    #     for neighbour in min_top_neighbours:
+    #         if board[neighbour] == min_top or board[neighbour] == min_top - 1:
+    #             shortestPath.append(board[neighbour])
+    #         min_top -= 1
+    # while(min_btm >= 1):
+    #     for neighbour in min_btm_neighbours:
+    #         if board[neighbour] == min_btm and board[neighbour] == min_btm - 1:
+    #             shortestPath.append(board[neighbour])
+    #         min_btm -= 1
+    # print("shortest path",len(shortestPath))
 
-    for i in range(n):
-        if board[0][i] < min_btm and board[0][i] != 0:
-            min_btm = board[0][i]
-            min_btm_coord = i
-        if board[n-1][i] < min_top and board[n-1][i] != 0:
-            min_top = board[n-1][i]
-            min_top_coord = i
+    shortest_path = 0
 
-    print("min top",min_top)
-    print("min btm", min_btm)
-    shortestPath = []
-    min_top_neighbours = getCoordNeighbours(n, n-1, min_top_coord)
-    min_btm_neighbours = getCoordNeighbours(n, 0, min_btm_coord)
-    while(min_top >= 1):
-        for neighbour in min_top_neighbours:
-            if board[neighbour] == min_top or board[neighbour] == min_top - 1:
-                shortestPath.append(board[neighbour])
-            min_top -= 1
-    while(min_btm >= 1):
-        for neighbour in min_btm_neighbours:
-            if board[neighbour] == min_btm and board[neighbour] == min_btm - 1:
-                shortestPath.append(board[neighbour])
-            min_btm -= 1
+    if player == 1:
+        min_top_border = np.inf
+        min_btm_border = np.inf
 
-    return len(shortestPath)
+        for i in range(n):
+            if min_top_border > board[n-1][i]:
+                min_top_border = board[n-1][i]
+            if min_btm_border > board[0][i]:
+                min_btm_border = board[0][i]
+
+
+        #scan from the btm border
+        for i in range(0,row):
+            for j in range(n):
+                if min_btm_border == board[i][j] and original_board[i][j] == player:
+                    shortest_path += 1
+                if min_btm_border-1 == board[i][j]:
+                    shortest_path += 1
+                    min_btm_border -= 1
+                elif min_btm_border == 1:
+                    break
+
+        for i in range(n-1, row, -1):
+            for j in range(n):
+                if min_top_border == board[i][j] and original_board[i][j] == player:
+                    shortest_path += 1
+                if min_top_border-1 == board[i][j]:
+                    shortest_path += 1
+                    min_top_border -= 1
+                elif min_top_border == 1:
+                    break
+
+    else:
+        min_right_border = np.inf
+        min_left_border = np.inf
+
+        for i in range(n):
+            if min_right_border > board[i][n-1]:
+                min_right_border = board[i][n-1]
+            if min_left_border > board[i][0]:
+                min_left_border = board[i][0]
+
+        # scan from the btm border
+        for i in range(n):
+            for j in range(0, column):
+                if min_left_border == board[i][j] and original_board[i][j] == player:
+                    shortest_path += 1
+                if min_left_border - 1 == board[i][j]:
+                    shortest_path += 1
+                    min_left_border -= 1
+                elif min_left_border == 1:
+                    break
+
+        for i in range(n):
+            for j in range(n - 1, column, -1):
+                if min_right_border == board[i][j] and original_board[i][j] == player:
+                    shortest_path += 1
+                if min_right_border - 1 == board[i][j]:
+                    shortest_path += 1
+                    min_right_border -= 1
+                elif min_right_border == 1:
+                    break
+
+    #print(row,column,shortest_path)
+
+    return shortest_path
 
 
 def getNeighbours(number, degree, row, column, already_visited):
 
     if degree == 1:
-        print("degree 1", getCoordNeighbours(number, row, column))
+        # print("degree 1", getCoordNeighbours(number, row, column))
         return getCoordNeighbours(number, row, column)
 
     next_neighbours = set()
@@ -108,22 +173,23 @@ def getNeighbours(number, degree, row, column, already_visited):
             if new_neighbour not in already_visited:
                 #print("added")
                 next_neighbours.add(new_neighbour)
-    print("degree", degree, next_neighbours)
+    # print("degree", degree, next_neighbours)
     return next_neighbours
 
 
 def assignValue(original_board, board, neighbours, player, radius):
     #print("ori board within assign\n", original_board)
     for neighbour in neighbours:
-        if original_board[neighbour[0]][neighbour[1]] == 1:
+        if original_board[neighbour[0]][neighbour[1]] == player:
             board[neighbour[0]][neighbour[1]] = radius - 1
-        elif original_board[neighbour[0]][neighbour[1]] == 2:
+        elif original_board[neighbour[0]][neighbour[1]] == _SWAP_PLAYER[player]:
             board[neighbour[0]][neighbour[1]] = 100
         else:
             board[neighbour[0]][neighbour[1]] = radius
     #print("assign value for degree neighbours\n", board)
 
 
+# get the neighbours of row and column
 def getCoordNeighbours(n, row, column):
     neighbors = []
     for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, 1), (1, -1)]:

@@ -1,29 +1,27 @@
 """
 Provide a class to maintain the state of a Cachex game board, including
 some helper methods to assist in updating and searching the board.
-
 NOTE:
 This board representation is designed to be used internally by the referee
 for the purposes of validating actions and displaying the result of the game.
 Each player is expected to store its own internal representation of the board
 for use in informing decisions about which action to choose each turn. Please
-don't assume this class is an "ideal" board representation for your own agent; 
-you should think carefully about how to design your own data structures for 
-representing the state of a game, with respect to your chosen strategy. 
+don't assume this class is an "ideal" board representation for your own agent;
+you should think carefully about how to design your own data structures for
+representing the state of a game, with respect to your chosen strategy.
 """
 
 from queue import Queue
-from numpy import zeros, array, roll, vectorize
-from queue import PriorityQueue
+from numpy import zeros, array, roll, vectorize, count_nonzero
 
 # Utility function to add two coord tuples
 _ADD = lambda a, b: (a[0] + b[0], a[1] + b[1])
 
 # Neighbour hex steps in clockwise order
-_HEX_STEPS = array([(1, -1), (1, 0), (0, 1), (-1, 1), (-1, 0), (0, -1)], 
+_HEX_STEPS = array([(1, -1), (1, 0), (0, 1), (-1, 1), (-1, 0), (0, -1)],
     dtype="i,i")
 
-# Pre-compute diamond capture patterns - each capture pattern is a 
+# Pre-compute diamond capture patterns - each capture pattern is a
 # list of offset steps:
 # [opposite offset, neighbour 1 offset, neighbour 2 offset]
 #
@@ -34,9 +32,9 @@ _HEX_STEPS = array([(1, -1), (1, 0), (0, 1), (-1, 1), (-1, 0), (0, -1)],
 # neighbours are adjacent to each other (roll 1), OR "sideways", in
 # which case the neighbours are spaced apart (roll 2). This means
 # for a given cell, it is part of 6 + 6 possible diamonds.
-_CAPTURE_PATTERNS = [[_ADD(n1, n2), n1, n2] 
-    for n1, n2 in 
-        list(zip(_HEX_STEPS, roll(_HEX_STEPS, 1))) + 
+_CAPTURE_PATTERNS = [[_ADD(n1, n2), n1, n2]
+    for n1, n2 in
+        list(zip(_HEX_STEPS, roll(_HEX_STEPS, 1))) +
         list(zip(_HEX_STEPS, roll(_HEX_STEPS, 2)))]
 
 # Maps between player string and internal token type
@@ -75,7 +73,7 @@ class Board:
 
     def swap(self):
         """
-        Swap player positions by mirroring the state along the major 
+        Swap player positions by mirroring the state along the major
         board axis. This is really just a "matrix transpose" op combined
         with a swap between player token types.
         """
@@ -92,7 +90,7 @@ class Board:
 
     def connected_coords(self, start_coord):
         """
-        Find connected coordinates from start_coord. This uses the token 
+        Find connected coordinates from start_coord. This uses the token
         value of the start_coord cell to determine which other cells are
         connected (e.g., all will be the same value).
         """
@@ -159,3 +157,16 @@ class Board:
         return [_ADD(coord, step) for step in _HEX_STEPS \
             if self.inside_bounds(_ADD(coord, step))]
 
+    def get_actions(self):
+        action_space = []
+        # add every empty node to action space
+        for i in range(self.n):
+            for j in range(self.n):
+                if not self.is_occupied((i, j)):
+                    action_space.append((i, j))
+        if count_nonzero(self._data) == 0 and self.n % 2 == 1:
+            action_space.remove((self.n // 2, self.n // 2))
+        return action_space
+
+    def check_empty(self):
+        return count_nonzero(self._data) == 0
