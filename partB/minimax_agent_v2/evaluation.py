@@ -54,4 +54,4 @@ def get_score(board, action, player):
     feature1 = get_difference(board)
     feature2 = get_longest_component(board, action, player)
     feature3 = get_longest_component_same_line(board, action, player)
-    return feature1 + feature2 + feature3
+    return 0.5*feature1 + 0.2*feature2 + 0.3*feature3

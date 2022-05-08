@@ -24,7 +24,8 @@ _SWAP_PLAYER = { "red": "blue", "blue": "red" }
 #             value := min(value, minimax(child, depth − 1, TRUE))
 #         return value
 
-def minimax(board, action, depth, player):
+def minimax(board, action, depth, player, alpha, beta):
+    
     captured = board.place(player, action)
     if check_terminal_state(board, action, player):
         board.revert_action(action, captured)
@@ -38,18 +39,22 @@ def minimax(board, action, depth, player):
     if player == 'blue': # why blue here???
         v = -np.inf
         for a in board.get_actions():
-            score = minimax(board, a, depth - 1, _SWAP_PLAYER[player])
-
+            score = minimax(board, a, depth - 1, _SWAP_PLAYER[player], alpha, beta)
             v = max(v, score)
+            alpha = max(alpha, v)
+            if beta <= alpha:
+                break
         board.revert_action(action, captured)
         return v
         
     else:
         v = np.inf
         for a in board.get_actions():
-            score = minimax(board, a, depth - 1, _SWAP_PLAYER[player])
-
+            score = minimax(board, a, depth - 1, _SWAP_PLAYER[player], alpha, beta)
             v = min(v, score)
+            beta = min(beta, v)
+            if beta <= alpha:
+                break
         board.revert_action(action, captured)
         return v
     
