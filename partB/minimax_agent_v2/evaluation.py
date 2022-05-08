@@ -24,9 +24,9 @@ def get_longest_component(board, action, player):
     reachable = board.connected_coords((r, q))
     axis_vals = [coord[_PLAYER_AXIS[player]] for coord in reachable]
     if player == "red":
-        return (max(axis_vals) - min(axis_vals))/len(reachable)
+        return (max(axis_vals) - min(axis_vals))
     if player == "blue":
-        return (min(axis_vals) - max(axis_vals))//len(reachable)
+        return (min(axis_vals) - max(axis_vals))
 
 
 def get_longest_component_same_line(board, action, player):
@@ -50,4 +50,4 @@ def get_longest_component_same_line(board, action, player):
 
 
 def get_score(board, action, player):
-    return 0.3 * get_difference(board) + 0.2 * get_longest_component(board, action, player) + 0.5 * get_longest_component_same_line(board, action, player)
+    return get_difference(board) + get_longest_component(board, action, player) + get_longest_component_same_line(board, action, player)

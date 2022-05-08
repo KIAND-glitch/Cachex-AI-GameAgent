@@ -59,9 +59,7 @@ class Player:
             best_score = np.inf
 
         for action in action_space:
-            board_copy = deepcopy(self.board)
-            board_copy.place(self.player, action)
-            score = minimax(board_copy, action, 2, self.player)
+            score = minimax(self.board, action, 2, self.player)
             print(action, score)
             if self.player == "red":
                 if score > best_score:
@@ -69,13 +67,13 @@ class Player:
                     best_score = score
                 if best_score == -np.inf:
 
-                    if self.prev_action is not None:
-                        neighbours = board_copy._coord_neighbours(action)
-                        for neighbour in neighbours:
-                            if not board_copy.is_occupied(neighbour):
-                                best_action = neighbour
-                    else:
-                        best_action = choice(action_space)
+                    # if self.prev_action is not None:
+                    #     neighbours = board_copy._coord_neighbours(action)
+                    #     for neighbour in neighbours:
+                    #         if not board_copy.is_occupied(neighbour):
+                    #             best_action = neighbour
+                    # else:
+                    best_action = choice(action_space)
             else:
                 if score < best_score:
                     best_action = action
