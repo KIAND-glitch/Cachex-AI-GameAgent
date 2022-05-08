@@ -59,7 +59,6 @@ def shortestPath(original_board, n, player, row, column):
 
     print("shortest path board\n",board)
 
-
     min_top_coord = 0
     min_btm_coord = 0
     min_top = np.inf
