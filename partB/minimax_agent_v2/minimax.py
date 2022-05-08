@@ -25,29 +25,34 @@ _SWAP_PLAYER = { "red": "blue", "blue": "red" }
 #         return value
 
 def minimax(board, action, depth, player):
-    board_copy = deepcopy(board)
-    board_copy.place(player, action)
-    if check_terminal_state(board_copy, action, player):
+    captured = board.place(player, action)
+    if check_terminal_state(board, action, player):
+        board.revert_action(action, captured)
         return -np.inf if player == 'blue' else np.inf
     if depth == 0:
-        return get_score(board_copy, action, player)
+        score = get_score(board, action, player)
+        board.revert_action(action, captured)
+        return score
 
     
     if player == 'blue': # why blue here???
         v = -np.inf
-        for a in board_copy.get_actions():
-            score = minimax(board_copy, a, depth - 1, _SWAP_PLAYER[player])
+        for a in board.get_actions():
+            score = minimax(board, a, depth - 1, _SWAP_PLAYER[player])
 
             v = max(v, score)
+        board.revert_action(action, captured)
         return v
         
     else:
         v = np.inf
-        for a in board_copy.get_actions():
-            score = minimax(board_copy, a, depth - 1, _SWAP_PLAYER[player])
+        for a in board.get_actions():
+            score = minimax(board, a, depth - 1, _SWAP_PLAYER[player])
 
             v = min(v, score)
+        board.revert_action(action, captured)
         return v
+    
 
 def check_terminal_state(board, action, player):
     r, q = action
