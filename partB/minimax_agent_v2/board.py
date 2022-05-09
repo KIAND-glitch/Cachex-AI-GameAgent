@@ -284,3 +284,18 @@ class Board:
                     queue.put(coord)
 
         return list(reachable)
+
+    def get_opponents_first_move(self):
+        move = None
+        count = 0
+        for i in range(self.n):
+            for j in range(self.n):
+                if self.is_occupied((i, j)):
+                    move = (i,j)
+                else:
+                    count+=1
+
+        if count == (self.n * self.n) - 1 and move[1]==1:
+            return True
+        else:
+            return False
