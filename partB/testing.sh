@@ -7,6 +7,9 @@ do
     for (( j = 1 ; j <= 50; j++ )) ### Inner for loop ###
     do
         python -m referee -s 100 -t $((i * i)) $i minimax_agent_v2 random_agent > log.txt
+        if [[ $(tail -n 1 log.txt) == *"blue"* ]]; then
+            cat log.txt >> error.txt
+        fi
         tail -n 1 log.txt >> results.txt
     done
 
@@ -21,6 +24,9 @@ do
     for (( j = 1 ; j <= 50; j++ )) ### Inner for loop ###
     do
         python -m referee -s 100 -t $((i * i)) $i random_agent minimax_agent_v2 > log.txt
+        if [[ $(tail -n 1 log.txt) == *"red"* ]]; then
+            cat log.txt >> error.txt
+        fi
         tail -n 1 log.txt >> results.txt
     done
 
