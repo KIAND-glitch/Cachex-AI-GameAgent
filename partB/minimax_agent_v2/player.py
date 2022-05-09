@@ -38,6 +38,12 @@ class Player:
         Called at the beginning of your turn. Based on the current state
         of the game, select an action to play.
         """
+
+        if(self.board.get_opponents_first_move()):
+            print("hello there"
+                  )
+            return ("STEAL", )
+
         action_space = self.board.get_actions_root(self.player)
         print(action_space)
         best_action = None
@@ -94,10 +100,15 @@ class Player:
         """
         # put your code here
         if action[0] == "STEAL":
+            flag = 0
             for i in range(self.n):
                 for j in range(self.n):
-                    if self.board.is_occupied((i, j)):
-                        self.board.__setitem__((i ,j), player)
+                    if self.board.is_occupied((i, j)) and flag == 0:
+                        print(i,j)
+                        self.board.__setitem__((i, j), None)
+                        self.board.__setitem__((j, i), player)
+                        flag = 1
+                        break
 
         if action[0] == "PLACE":
             self.board.place(player, action[1:])

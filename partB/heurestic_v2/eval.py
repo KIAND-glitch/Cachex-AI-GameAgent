@@ -93,6 +93,28 @@ def shortestPath(ori_board, n, player, row, column):
         min_top_border = board[n-1].min()
         min_btm_border = board[0].min()
 
+        start = None
+
+        for i in range(n):
+            if board[n-1][i] == min_top_border:
+                start = (n-1, i)
+
+        end = (row,column)
+        path = list()
+        path.append(start)
+        c = 0
+        ans = search(board, n, min_top_border, start,end,path)
+        print("path is ",ans)
+
+        for i in range(n):
+            if board[0][i] == min_btm_border:
+                start = (0, i)
+
+        path.append(start)
+        ans = search(board, n, min_top_border, start,end,path)
+        print("path is ",ans)
+
+
         #scan from the btm border
         for i in range(0,row):
             for j in range(n):
@@ -149,6 +171,34 @@ def shortestPath(ori_board, n, player, row, column):
 
     return shortest_path
 
+
+def searchForStart(board, n, search_value, start_coord, end_coord, count):
+    neighbours = getCoordNeighbours(n, start_coord[0], start_coord[1])
+
+    print("start",start_coord,"neigh",neighbours)
+    if start_coord == end_coord:
+        #path.add(start_coord)
+        #print("from serach path is ", path)
+        return count
+    for neighbour in neighbours:
+        if search_value - 1 == board[neighbour]:
+            print("neighbour to be added", neighbour, "value",search_value -1)
+            #path.add(neighbour)
+            count += 1
+            searchForStart(board, n, search_value - 1, neighbour, end_coord, count)
+
+
+def search(board, n, value, start, end, path):
+
+    if path:
+        if start == end:
+            return path
+
+        neighbours = getCoordNeighbours(n, start[0], start[1])
+        for neighbour in neighbours:
+            if value == board[neighbour]:
+                path.append(neighbour)
+                search(board, n, value-1, neighbour, end, path)
 
 def getNeighbours(number, degree, row, column, already_visited):
 
