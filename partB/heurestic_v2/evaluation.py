@@ -76,7 +76,7 @@ def shortestPath(input_board, n, player, row, column,):
     return len(shortestPath)
 
 
-def getNeighbours(board, n, degree, row, column, ):
+def getNeighbours(board, n, degree, row, column):
 
     if degree == 1:
         return getCoordNeighbours(n, row, column)

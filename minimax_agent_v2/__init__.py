@@ -1,1 +1,0 @@
-from minimax_agent_v2.player import Player

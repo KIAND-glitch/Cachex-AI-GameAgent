@@ -16,6 +16,7 @@ from re import L
 from numpy import zeros, array, roll, vectorize, count_nonzero
 from collections import OrderedDict
 
+
 # Utility function to add two coord tuples
 _ADD = lambda a, b: (a[0] + b[0], a[1] + b[1])
 
@@ -170,61 +171,18 @@ class Board:
         return [_ADD(coord, step) for step in _HEX_STEPS \
             if self.inside_bounds(_ADD(coord, step))]
 
-    def get_actions(self):
-        action_space = set()
-        max_size_red = 0
-        max_size_blue = 0
-        max_components_red = []
-        max_components_blue = []
+    def get_actions_base(self):
+        if self.n <= 6:
+            degree = 2
+        else:
+            degree = 1
         visited = []
-        if count_nonzero(self._data) == 0:
-            action_space.add((0, 1))
-            return list(action_space)
-
-        for i in range(self.n):
-            for j in range(self.n):
-                if self.is_occupied((i, j)) and (i, j) not in visited:
-                    reachable = self.connected_coords((i, j))
-                    size = len(reachable)
-                    if self._data[i, j] == 1:
-                        if size > max_size_red:
-                            max_size_red = size
-                            max_components_red = reachable
-                    elif self._data[i, j] == 2:
-                        if size > max_size_blue:
-                            max_size_blue = size
-                            max_components_blue = reachable
-                    visited.extend(reachable)
-                    
-        if max_components_red:
-            connected_all = self.connected_coords_all(max_components_red[0])
-            for coord in connected_all:
-                neighbors = self._coord_neighbours(coord)
-                for neighbor in neighbors:
-                    if neighbor not in connected_all and not self.is_occupied(neighbor):
-                        action_space.add(neighbor)
-        
-        if max_components_blue:
-            connected_all = self.connected_coords_all(max_components_blue[0])
-            for coord in connected_all:
-                neighbors = self._coord_neighbours(coord)
-                for neighbor in neighbors:
-                    if neighbor not in connected_all and not self.is_occupied(neighbor):
-                        action_space.add(neighbor)
-
-        return list(action_space)
-
-    def get_actions_root(self, player):
         action_space_red = set()
         action_space_blue = set()
         max_size_red = 0
         max_size_blue = 0
         max_components_red = []
         max_components_blue = []
-        visited = []
-        if count_nonzero(self._data) == 0:
-            return [(0,1)]
-
         for i in range(self.n):
             for j in range(self.n):
                 if self.is_occupied((i, j)) and (i, j) not in visited:
@@ -239,34 +197,70 @@ class Board:
                             max_size_blue = size
                             max_components_blue = reachable
                     visited.extend(reachable)
-                    
+
         if max_components_red:
-            connected_all = self.connected_coords_all(max_components_red[0])
-            for coord in connected_all:
-                neighbors = self._coord_neighbours(coord)
+            top_nodes = [x for x in max_components_red if x[0] == max(max_components_red)[0]]
+            bottom_nodes = [x for x in max_components_red if x[0] == min(max_components_red)[0]]
+            for node in set([*top_nodes, *bottom_nodes]):
+                neighbors = self.getNeighbours(degree, node[0], node[1])
+                action_space_red.update(neighbors)
+            # if there are opponent tokens near our tokens, add that tokens neighbors to the action space
+            for node in max_components_red:
+                neighbors = self._coord_neighbours(node)
                 for neighbor in neighbors:
-                    if neighbor not in connected_all and not self.is_occupied(neighbor):
-                        action_space_red.add(neighbor)
-        
+                    if self._data[neighbor] == 2:
+                        action_space_red.update(self.getNeighbours(degree, node[0], node[1]))
+
         if max_components_blue:
-            connected_all = self.connected_coords_all(max_components_blue[0])
-            for coord in connected_all:
-                neighbors = self._coord_neighbours(coord)
+            top_nodes = [x for x in max_components_blue if x[0] == max(max_components_blue)[0]]
+            bottom_nodes = [x for x in max_components_blue if x[0] == min(max_components_blue)[0]]
+            for node in set([*top_nodes, *bottom_nodes]):
+                neighbors = self.getNeighbours(degree, node[0], node[1])
+                action_space_blue.update(neighbors)
+            for node in max_components_blue:
+                neighbors = self._coord_neighbours(node)
                 for neighbor in neighbors:
-                    if neighbor not in connected_all and not self.is_occupied(neighbor):
-                        action_space_blue.add(neighbor)
-        print(action_space_red)
-        print(action_space_blue)
-        if count_nonzero(self._data) < 5:
-            if player == 'red':
-                return list(OrderedDict.fromkeys([*list(action_space_blue), *list(action_space_red)]))
-            elif player == 'blue':
-                return list(OrderedDict.fromkeys([*list(action_space_red), *list(action_space_blue)]))
+                    if self._data[neighbor] == 1:
+                        action_space_blue.update(self.getNeighbours(degree, node[0], node[1]))
+
+        return (action_space_red, action_space_blue)
+
+    def get_actions(self):
+        action_space_red, action_space_blue = self.get_actions_base()
+        # print(action_space)
+        return list([*action_space_red, *action_space_blue])
+
+    def get_actions_root(self, player):
+        if count_nonzero(self._data) == 0:
+            return [(0,1)]
+        action_space_red, action_space_blue = self.get_actions_base()
+
+        
+
+        if player == 'red':
+            return list(OrderedDict.fromkeys([*list(action_space_blue), *list(action_space_red)]))
         else:
-            if player == 'red':
-                return list(action_space_red)
-            elif player == 'blue':
-                return list(action_space_blue)
+            return list(OrderedDict.fromkeys([*list(action_space_red), *list(action_space_blue)]))
+    
+        
+    def getNeighbours(self, degree, row, column):
+        new_neighbours = set()
+        if degree == 1:
+            neighbors = self._coord_neighbours((row, column))
+            for neighbor in neighbors:
+                if not self.is_occupied(neighbor):
+                    new_neighbours.add(neighbor)
+            return new_neighbours
+
+        neighbours =  self.getNeighbours(degree - 1, row, column)
+        for neighbour in neighbours:
+            new_neighbours.add(neighbour)
+            new_neighbour_list = self._coord_neighbours((neighbour[0], neighbour[1]))
+            for new_neighbour in new_neighbour_list:
+                if not self.is_occupied(new_neighbour):
+                    new_neighbours.add(new_neighbour)
+
+        return new_neighbours
 
     def check_empty(self):
         return count_nonzero(self._data) == 0

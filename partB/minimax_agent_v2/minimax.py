@@ -12,21 +12,18 @@ _SWAP_PLAYER = { "red": "blue", "blue": "red" }
 def minimax(board, action, depth, player, alpha, beta, zobrist_table, transposition_table):
     captured = board.place(player, action)
     h = computeHash(board._data, board.n, zobrist_table)
-    if h in transposition_table:
+    if h in transposition_table and transposition_table[h][1] >= depth:
         board.revert_action(action, captured)
-        return transposition_table[h]
+        return transposition_table[h][0]
     if check_terminal_state(board, action, player):
         board.revert_action(action, captured)
-        if h not in transposition_table:
-            transposition_table[h] = -np.inf if player == 'blue' else np.inf
+        transposition_table[h] = (-np.inf, depth) if player == 'blue' else (np.inf, depth)
         return -np.inf if player == 'blue' else np.inf
     if depth == 0:
         score = get_score(board, action, player)
         board.revert_action(action, captured)
-        if h not in transposition_table:
-            transposition_table[h] = score
+        transposition_table[h] = (score, 0)
         return score
-
     
     if player == 'blue': # why blue here???
         v = -np.inf
@@ -49,8 +46,7 @@ def minimax(board, action, depth, player, alpha, beta, zobrist_table, transposit
                 break
         board.revert_action(action, captured)
 
-    if h not in transposition_table:
-        transposition_table[h] = v
+    transposition_table[h] = (v, depth)
     return v
     
 
