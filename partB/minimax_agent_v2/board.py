@@ -170,17 +170,115 @@ class Board:
 
     def get_actions(self):
         action_space = set()
-        # add every empty node to action space
-        for i in range(self.n):
-            for j in range(self.n):
-                if self.is_occupied((i, j)):
-                    neighbors = self._coord_neighbours((i, j))
-                    for neighbor in neighbors:
-                        if not self.is_occupied(neighbor):
-                            action_space.add(neighbor)
+        max_size_red = 0
+        max_size_blue = 0
+        max_components_red = []
+        max_components_blue = []
+        visited = []
         if count_nonzero(self._data) == 0:
             action_space.add((0, 1))
-        return action_space
+            return list(action_space)
+
+        for i in range(self.n):
+            for j in range(self.n):
+                if self.is_occupied((i, j)) and (i, j) not in visited:
+                    reachable = self.connected_coords((i, j))
+                    size = len(reachable)
+                    if self._data[i, j] == 1:
+                        if size > max_size_red:
+                            max_size_red = size
+                            max_components_red = reachable
+                    elif self._data[i, j] == 2:
+                        if size > max_size_blue:
+                            max_size_blue = size
+                            max_components_blue = reachable
+                    visited.extend(reachable)
+                    
+        if max_components_red:
+            connected_all = self.connected_coords_all(max_components_red[0])
+            for coord in connected_all:
+                neighbors = self._coord_neighbours(coord)
+                for neighbor in neighbors:
+                    if neighbor not in connected_all:
+                        action_space.add(neighbor)
+        
+        if max_components_blue:
+            connected_all = self.connected_coords_all(max_components_blue[0])
+            for coord in connected_all:
+                neighbors = self._coord_neighbours(coord)
+                for neighbor in neighbors:
+                    if neighbor not in connected_all:
+                        action_space.add(neighbor)
+
+        return list(action_space)
+
+    def get_actions_root(self, player):
+        action_space_red = set()
+        action_space_blue = set()
+        max_size_red = 0
+        max_size_blue = 0
+        max_components_red = []
+        max_components_blue = []
+        visited = []
+        if count_nonzero(self._data) == 0:
+            return [(0,1)]
+
+        for i in range(self.n):
+            for j in range(self.n):
+                if self.is_occupied((i, j)) and (i, j) not in visited:
+                    reachable = self.connected_coords((i, j))
+                    size = len(reachable)
+                    if self._data[i, j] == 1:
+                        if size > max_size_red:
+                            max_size_red = size
+                            max_components_red = reachable
+                    elif self._data[i, j] == 2:
+                        if size > max_size_blue:
+                            max_size_blue = size
+                            max_components_blue = reachable
+                    visited.extend(reachable)
+                    
+        if max_components_red:
+            connected_all = self.connected_coords_all(max_components_red[0])
+            for coord in connected_all:
+                neighbors = self._coord_neighbours(coord)
+                for neighbor in neighbors:
+                    if neighbor not in connected_all:
+                        action_space_red.add(neighbor)
+        
+        if max_components_blue:
+            connected_all = self.connected_coords_all(max_components_blue[0])
+            for coord in connected_all:
+                neighbors = self._coord_neighbours(coord)
+                for neighbor in neighbors:
+                    if neighbor not in connected_all:
+                        action_space_blue.add(neighbor)
+        
+        if player == 'red':
+            return list(set([*list(action_space_blue), *list(action_space_red)]))
+        elif player == 'blue':
+            return list(set([*list(action_space_red), *list(action_space_blue)]))
 
     def check_empty(self):
         return count_nonzero(self._data) == 0
+
+    def connected_coords_all(self, start_coord):
+        """
+        Find connected coordinates from start_coord. This uses the token 
+        value of the start_coord cell to determine which other cells are
+        connected (e.g., all will be the same value).
+        """
+
+        # Use bfs from start coordinate
+        reachable = set()
+        queue = Queue(0)
+        queue.put(start_coord)
+
+        while not queue.empty():
+            curr_coord = queue.get()
+            reachable.add(curr_coord)
+            for coord in self._coord_neighbours(curr_coord):
+                if coord not in reachable and self._data[coord] != 0:
+                    queue.put(coord)
+
+        return list(reachable)

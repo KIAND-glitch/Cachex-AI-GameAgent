@@ -36,7 +36,8 @@ class Player:
         Called at the beginning of your turn. Based on the current state
         of the game, select an action to play.
         """
-        action_space = self.board.get_actions()
+        action_space = self.board.get_actions_root(self.player)
+        print(action_space)
         best_action = None
 
         if self.player == "red":
@@ -45,6 +46,7 @@ class Player:
             best_score = np.inf
 
         for action in action_space:
+            
             score = minimax(self.board, action, 2, self.player, -np.inf, np.inf)
             print(action, score)
             captured = self.board.place(self.player, action)
