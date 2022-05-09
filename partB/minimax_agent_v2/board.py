@@ -55,6 +55,7 @@ class Board:
         """
         self.n = n
         self._data = zeros((n, n), dtype=int)
+        self.first_move = False
 
     def __getitem__(self, coord):
         """
@@ -286,17 +287,6 @@ class Board:
 
         return list(reachable)
 
-    def get_opponents_first_move(self):
-        move = None
-        count = 0
-        for i in range(self.n):
-            for j in range(self.n):
-                if self.is_occupied((i, j)):
-                    move = (i,j)
-                else:
-                    count+=1
-
-        if count == (self.n * self.n) - 1 and move[1]==1:
+    def should_steal(self):
+        if self.is_occupied((0, 1)) or self.is_occupied((1, 0)) or self.is_occupied((self.n - 1, self.n - 2)) or self.is_occupied((self.n - 2, self.n - 1)):
             return True
-        else:
-            return False

@@ -31,7 +31,7 @@ class Player:
         self.board = Board(n)
         self.zobrist_table = np.random.randint(0, 2**63-1, (n, n, 2))
         self.transposition_table = {}
-
+        self.first_move_played = True if self.player=="red" else False
 
     def action(self):
         """
@@ -39,10 +39,10 @@ class Player:
         of the game, select an action to play.
         """
 
-        if(self.board.get_opponents_first_move()):
-            print("hello there"
-                  )
-            return ("STEAL", )
+        if not self.first_move_played:
+            self.first_move_played = True
+            if self.board.should_steal():
+                return ("STEAL", )
 
         action_space = self.board.get_actions_root(self.player)
         print(action_space)
