@@ -19,6 +19,14 @@ def minimax(board, action, depth, player, alpha, beta, zobrist_table, transposit
         board.revert_action(action, captured)
         transposition_table[h] = (-np.inf, depth) if player == 'blue' else (np.inf, depth)
         return -np.inf if player == 'blue' else np.inf
+    if captured and board.n > 4 and depth == 2:
+        board.revert_action(action, captured)
+        transposition_table[h] = (-100, depth) if player == 'blue' else (100, depth)
+        return -100 if player == 'blue' else 100
+    if captured and board.n <= 4 and depth == 3:
+        board.revert_action(action, captured)
+        transposition_table[h] = (-100, depth) if player == 'blue' else (100, depth)
+        return -100 if player == 'blue' else 100
     if depth == 0:
         score = get_score(board, action, player)
         board.revert_action(action, captured)

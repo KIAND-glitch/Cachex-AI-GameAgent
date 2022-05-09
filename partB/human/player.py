@@ -47,7 +47,9 @@ class Player:
             for i in range(self.n):
                 for j in range(self.n):
                     if self.board.is_occupied((i, j)):
-                        self.board.__setitem__((i,j), player)
+                        self.board.__setitem__((i, j), None)
+                        self.board.__setitem__((j, i), player)
+                        return
 
         if action[0] == "PLACE":
             self.board.place(player, action[1:])

@@ -32,6 +32,7 @@ class Player:
         self.zobrist_table = np.random.randint(0, 2**63-1, (n, n, 2))
         self.transposition_table = {}
         self.first_move_played = True if self.player=="red" else False
+        self.depth = 3 if n <= 4 else 2
 
     def action(self):
         """
@@ -55,7 +56,7 @@ class Player:
 
         for action in action_space:
             
-            score = minimax(self.board, action, 2, self.player, -np.inf, np.inf, self.zobrist_table, self.transposition_table)
+            score = minimax(self.board, action, self.depth, self.player, -np.inf, np.inf, self.zobrist_table, self.transposition_table)
             print(action, score)
             captured = self.board.place(self.player, action)
             terminal = check_terminal_state(self.board, action, self.player)
@@ -105,6 +106,7 @@ class Player:
                     if self.board.is_occupied((i, j)):
                         self.board.__setitem__((i, j), None)
                         self.board.__setitem__((j, i), player)
+                        self.board.stolen = True
                         return
 
         if action[0] == "PLACE":

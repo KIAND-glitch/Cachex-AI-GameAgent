@@ -56,6 +56,7 @@ class Board:
         self.n = n
         self._data = zeros((n, n), dtype=int)
         self.first_move = False
+        self.stolen = False
 
     def __getitem__(self, coord):
         """
@@ -172,11 +173,8 @@ class Board:
         return [_ADD(coord, step) for step in _HEX_STEPS \
             if self.inside_bounds(_ADD(coord, step))]
 
-    def get_actions_base(self):
-        if self.n <= 6:
-            degree = 2
-        else:
-            degree = 1
+    def get_actions_base(self, degree):
+        
         visited = []
         action_space_red = set()
         action_space_blue = set()
@@ -227,20 +225,36 @@ class Board:
         return (action_space_red, action_space_blue)
 
     def get_actions(self):
-        action_space_red, action_space_blue = self.get_actions_base()
+        if self.n <= 6:
+            degree = 2
+        else:
+            degree = 1
+        action_space_red, action_space_blue = self.get_actions_base(degree)
         # print(action_space)
         return list([*action_space_red, *action_space_blue])
 
     def get_actions_root(self, player):
         if count_nonzero(self._data) == 0:
             return [(0,1)]
-        action_space_red, action_space_blue = self.get_actions_base()
+        
+        if self.n <= 6:
+            degree = 2
+        else:
+            degree = 1
 
         
 
         if player == 'red':
+            if (count_nonzero(self._data) == 1 and self.stolen) or (count_nonzero(self._data) == 2 and not self.stolen):
+                _, action_space_blue = self.get_actions_base(1)
+                return action_space_blue
+            action_space_red, action_space_blue = self.get_actions_base(degree)
             return list(OrderedDict.fromkeys([*list(action_space_blue), *list(action_space_red)]))
         else:
+            if (count_nonzero(self._data) == 2 and self.stolen) or (count_nonzero(self._data) == 1 and not self.stolen):
+                action_space_red, _ = self.get_actions_base(1)
+                return action_space_red
+            action_space_red, action_space_blue = self.get_actions_base(degree)
             return list(OrderedDict.fromkeys([*list(action_space_red), *list(action_space_blue)]))
     
         

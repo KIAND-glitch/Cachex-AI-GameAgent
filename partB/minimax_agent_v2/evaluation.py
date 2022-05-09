@@ -42,10 +42,36 @@ def get_longest_component_diff(board):
 
     return max_red - max_blue
 
+def get_border_diff(board):
+    n_red = 0
+    n_blue = 0
+    for i in range(board.n):
+        if board._data[i, 0] == 1:
+            n_red += 1
+        if board._data[i, 0] == 2:
+            n_blue += 1
+        if board._data[i, board.n - 1] == 1:
+            n_red += 1
+        if board._data[i, board.n - 1] == 2:
+            n_blue += 1
+        if board._data[0, i] == 1:
+            n_red += 1
+        if board._data[0, i] == 2:
+            n_blue += 1
+        if board._data[board.n - 1, i] == 1:
+            n_red += 1
+        if board._data[board.n - 1, i] == 2:
+            n_blue += 1
+    return n_red - n_blue
+
+def get_triangle_diff(board):
+    pass
+
 
 
 
 def get_score(board, action, player):
     feature1 = get_difference(board)
     feature2 = get_longest_component_diff(board)
-    return feature1 + feature2
+    feature3 = get_border_diff(board)
+    return  feature1 + feature2 + 0.5*feature3
