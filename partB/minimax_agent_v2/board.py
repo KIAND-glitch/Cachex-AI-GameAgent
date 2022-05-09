@@ -13,6 +13,7 @@ representing the state of a game, with respect to your chosen strategy.
 
 from queue import Queue
 from numpy import zeros, array, roll, vectorize, count_nonzero
+from collections import OrderedDict
 
 # Utility function to add two coord tuples
 _ADD = lambda a, b: (a[0] + b[0], a[1] + b[1])
@@ -199,7 +200,7 @@ class Board:
             for coord in connected_all:
                 neighbors = self._coord_neighbours(coord)
                 for neighbor in neighbors:
-                    if neighbor not in connected_all:
+                    if neighbor not in connected_all and not self.is_occupied(neighbor):
                         action_space.add(neighbor)
         
         if max_components_blue:
@@ -207,7 +208,7 @@ class Board:
             for coord in connected_all:
                 neighbors = self._coord_neighbours(coord)
                 for neighbor in neighbors:
-                    if neighbor not in connected_all:
+                    if neighbor not in connected_all and not self.is_occupied(neighbor):
                         action_space.add(neighbor)
 
         return list(action_space)
@@ -243,7 +244,7 @@ class Board:
             for coord in connected_all:
                 neighbors = self._coord_neighbours(coord)
                 for neighbor in neighbors:
-                    if neighbor not in connected_all:
+                    if neighbor not in connected_all and not self.is_occupied(neighbor):
                         action_space_red.add(neighbor)
         
         if max_components_blue:
@@ -251,13 +252,14 @@ class Board:
             for coord in connected_all:
                 neighbors = self._coord_neighbours(coord)
                 for neighbor in neighbors:
-                    if neighbor not in connected_all:
+                    if neighbor not in connected_all and not self.is_occupied(neighbor):
                         action_space_blue.add(neighbor)
-        
+        print(action_space_red)
+        print(action_space_blue)
         if player == 'red':
-            return list(set([*list(action_space_blue), *list(action_space_red)]))
+            return list(OrderedDict.fromkeys([*list(action_space_blue), *list(action_space_red)]))
         elif player == 'blue':
-            return list(set([*list(action_space_red), *list(action_space_blue)]))
+            return list(OrderedDict.fromkeys([*list(action_space_red), *list(action_space_blue)]))
 
     def check_empty(self):
         return count_nonzero(self._data) == 0

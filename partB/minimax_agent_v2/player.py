@@ -29,6 +29,8 @@ class Player:
         self.player = player
         # n x n array for state
         self.board = Board(n)
+        self.zobrist_table = np.random.randint(0, 2**63-1, (n, n, 2))
+        self.transposition_table = {}
 
 
     def action(self):
@@ -47,7 +49,7 @@ class Player:
 
         for action in action_space:
             
-            score = minimax(self.board, action, 2, self.player, -np.inf, np.inf)
+            score = minimax(self.board, action, 2, self.player, -np.inf, np.inf, self.zobrist_table, self.transposition_table)
             print(action, score)
             captured = self.board.place(self.player, action)
             terminal = check_terminal_state(self.board, action, self.player)
@@ -109,3 +111,4 @@ def check_terminal_state(board, action, player):
     if min(axis_vals) == 0 and max(axis_vals) == n - 1:
         return True
     return False
+
