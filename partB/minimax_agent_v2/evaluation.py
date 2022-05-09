@@ -48,4 +48,4 @@ def get_longest_component_diff(board):
 def get_score(board, action, player):
     feature1 = get_difference(board)
     feature2 = get_longest_component_diff(board)
-    return 0.3*feature1 + 0.7*feature2
+    return feature1 + feature2
