@@ -42,7 +42,7 @@ class StarLog:
         self.timefn = timefn
         self.star = star
         self.pad = pad
-        self.kwargs = {"file": file, "flush": True}
+        self.kwargs = {"file": file, "flush": False}
         if ansi:
             self.clear = "\033[H\033[2J"  # ANSI code to clear the terminal
         else:

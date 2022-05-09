@@ -12,6 +12,7 @@ representing the state of a game, with respect to your chosen strategy.
 """
 
 from queue import Queue
+from re import L
 from numpy import zeros, array, roll, vectorize, count_nonzero
 from collections import OrderedDict
 
@@ -256,10 +257,16 @@ class Board:
                         action_space_blue.add(neighbor)
         print(action_space_red)
         print(action_space_blue)
-        if player == 'red':
-            return list(OrderedDict.fromkeys([*list(action_space_blue), *list(action_space_red)]))
-        elif player == 'blue':
-            return list(OrderedDict.fromkeys([*list(action_space_red), *list(action_space_blue)]))
+        if count_nonzero(self._data) < 5:
+            if player == 'red':
+                return list(OrderedDict.fromkeys([*list(action_space_blue), *list(action_space_red)]))
+            elif player == 'blue':
+                return list(OrderedDict.fromkeys([*list(action_space_red), *list(action_space_blue)]))
+        else:
+            if player == 'red':
+                return list(action_space_red)
+            elif player == 'blue':
+                return list(action_space_blue)
 
     def check_empty(self):
         return count_nonzero(self._data) == 0

@@ -1,1 +1,0 @@
-for i in {1..10000}; do python -m referee 5 random_agent random_agent; done
