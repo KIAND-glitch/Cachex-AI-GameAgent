@@ -49,17 +49,17 @@ def get_border_diff(board):
         if board._data[i, 0] == 1:
             n_red += 1
         if board._data[i, 0] == 2:
-            n_blue += 1
+            n_blue += 0.5
         if board._data[i, board.n - 1] == 1:
             n_red += 1
         if board._data[i, board.n - 1] == 2:
-            n_blue += 1
+            n_blue += 0.5
         if board._data[0, i] == 1:
-            n_red += 1
+            n_red += 0.5
         if board._data[0, i] == 2:
             n_blue += 1
         if board._data[board.n - 1, i] == 1:
-            n_red += 1
+            n_red += 0.5
         if board._data[board.n - 1, i] == 2:
             n_blue += 1
     return n_red - n_blue

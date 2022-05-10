@@ -213,6 +213,10 @@ class Board:
             for node in set([*top_nodes, *bottom_nodes]):
                 neighbors = self.getNeighbours(degree, node[0], node[1])
                 action_space_red.update(neighbors)
+                all_neighbors = self._coord_neighbours(node)
+                for neighbor in all_neighbors:
+                    if self._data[neighbor] == 2:
+                        action_space_red.update(self.getNeighbours(degree, neighbor[0], neighbor[1]))
             # if there are opponent tokens near our tokens, add that tokens neighbors to the action space
             for node in max_components_red:
                 neighbors = self._coord_neighbours(node)
@@ -226,6 +230,10 @@ class Board:
             for node in set([*top_nodes, *bottom_nodes]):
                 neighbors = self.getNeighbours(degree, node[0], node[1])
                 action_space_blue.update(neighbors)
+                all_neighbors = self._coord_neighbours(node)
+                for neighbor in all_neighbors:
+                    if self._data[neighbor] == 1:
+                        action_space_blue.update(self.getNeighbours(degree, neighbor[0], neighbor[1]))
             for node in max_components_blue:
                 neighbors = self._coord_neighbours(node)
                 for neighbor in neighbors:
