@@ -3,7 +3,7 @@
 from copy import deepcopy
 import numpy as np
 from minimax_agent_v2.board import Board
-
+import time
 from minimax_agent_v2.minimax import minimax
 from random import choice
 
@@ -33,26 +33,23 @@ class Player:
         self.transposition_table = {}
         self.first_move_played = True if self.player=="red" else False
         self.depth = 3 if n <= 4 else 2
-        self.triangle_coord_list = []
-        for i in range(n):
-            for j in range(n-1):
-                if i == 0:
-                    self.triangle_coord_list.append(((i, j), (i+1, j), (i, j+1)))
-                elif i == n-1:
-                    self.triangle_coord_list.append(((i, j+1), (i, j), (i-1, j+1)))
-                else:
-                    self.triangle_coord_list.append(((i, j), (i+1, j), (i, j+1)))
-                    self.triangle_coord_list.append(((i, j+1), (i, j), (i-1, j+1)))
+        self.game_time = None
 
     def action(self):
         """
         Called at the beginning of your turn. Based on the current state
         of the game, select an action to play.
         """
+        move_start_time = time.time()
 
         if not self.first_move_played:
             self.first_move_played = True
             if self.board.should_steal():
+
+                move_end_time = time.time()
+                self.game_time = update_time(self.game_time, move_start_time, move_end_time)
+                print("players game time", self.game_time)
+
                 return ("STEAL", )
 
         action_space = self.board.get_actions_root(self.player)
@@ -93,6 +90,11 @@ class Player:
                     best_action = choice(action_space)
         # ignore steal for now
         print(best_action)
+
+        move_end_time = time.time()
+        self.game_time = update_time(self.game_time, move_start_time, move_end_time)
+        print("players game time", self.game_time)
+
         return ("PLACE", int(best_action[0]), int(best_action[1]))
 
 
@@ -131,4 +133,11 @@ def check_terminal_state(board, action, player):
     if min(axis_vals) == 0 and max(axis_vals) == n - 1:
         return True
     return False
+
+def update_time(game_time,start_time,end_time):
+    if game_time == None:
+        game_time = end_time - start_time
+    else:
+        game_time += end_time - start_time
+    return game_time
 

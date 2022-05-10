@@ -64,24 +64,39 @@ def get_border_diff(board):
             n_blue += 1
     return n_red - n_blue
 
-def get_triangle_diff(board):
-    n_red = 0
-    n_blue = 0
-    for coords in board.triangle_coord_list:
-        player = board._data[coords[0][0], coords[0][1]]
-        if board._data[coords[1][0], coords[1][1]] == player and board._data[coords[2][0], coords[2][1]] == player:
-            if player == 1:
-                n_red += 1
-            elif player == 2:
-                n_blue += 1
-    return n_red - n_blue
+def get_triangle_diff_kian(board):
+    red_triangles = 0
+    blue_triangles = 0
+    upward_visited = []
+    downward_visited = []
+    # upward triangles
+    for i in range(board.n - 1):
+        for j in range(board.n - 1):
+            if((i,j) not in upward_visited):
+                if board._data[i, j] == 1 and board._data[i, j+1] == 1 and board._data[i+1, j] == 1:
+                    upward_visited.extend([(i, j),(i, j+1),(i+1, j)])
+                    red_triangles += 1
+                if board._data[i, j] == 2 and board._data[i, j+1] == 2 and board._data[i+1, j] == 2:
+                    upward_visited.extend([(i, j),(i, j+1),(i+1, j)])
+                    blue_triangles += 1
 
+    # downward triangles
+    for i in range(board.n - 1, 0, -1):
+        for j in range(board.n - 1, 0, -1):
+            if ((i, j) not in downward_visited):
+                if board._data[i, j] == 1 and board._data[i, j-1] == 1 and board._data[i-1, j] == 1:
+                    downward_visited.extend([(i, j),(i, j+1),(i+1, j)])
+                    red_triangles += 1
+                if board._data[i, j] == 2 and board._data[i, j-1] == 2 and board._data[i-1, j] == 2:
+                    downward_visited.extend([(i, j),(i, j+1),(i+1, j)])
+                    blue_triangles += 1
 
+    print("red triangles",red_triangles)
+    print("blue triangles", blue_triangles)
 
 
 def get_score(board, action, player):
     feature1 = get_difference(board)
     feature2 = get_longest_component_diff(board)
     feature3 = get_border_diff(board)
-    feature4 = get_triangle_diff(board)
-    return  feature1 + feature2 + 0.1*feature3 + 0.2*feature4
+    return  feature1 + feature2 + 0.5*feature3
