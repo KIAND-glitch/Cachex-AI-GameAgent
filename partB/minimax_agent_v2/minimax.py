@@ -35,7 +35,7 @@ def minimax(board, action, depth, player, alpha, beta, zobrist_table, transposit
     
     if player == 'blue': # why blue here???
         v = -np.inf
-        for a in board.get_actions():
+        for a in board.get_actions(player):
             score = minimax(board, a, depth - 1, _SWAP_PLAYER[player], alpha, beta, zobrist_table, transposition_table)
             v = max(v, score)
             alpha = max(alpha, v)
@@ -46,7 +46,7 @@ def minimax(board, action, depth, player, alpha, beta, zobrist_table, transposit
         
     else:
         v = np.inf
-        for a in board.get_actions():
+        for a in board.get_actions(player):
             score = minimax(board, a, depth - 1, _SWAP_PLAYER[player], alpha, beta, zobrist_table, transposition_table)
             v = min(v, score)
             beta = min(beta, v)
