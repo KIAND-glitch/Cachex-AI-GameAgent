@@ -33,6 +33,16 @@ class Player:
         self.transposition_table = {}
         self.first_move_played = True if self.player=="red" else False
         self.depth = 3 if n <= 4 else 2
+        self.triangle_coord_list = []
+        for i in range(n):
+            for j in range(n-1):
+                if i == 0:
+                    self.triangle_coord_list.append(((i, j), (i+1, j), (i, j+1)))
+                elif i == n-1:
+                    self.triangle_coord_list.append(((i, j+1), (i, j), (i-1, j+1)))
+                else:
+                    self.triangle_coord_list.append(((i, j), (i+1, j), (i, j+1)))
+                    self.triangle_coord_list.append(((i, j+1), (i, j), (i-1, j+1)))
 
     def action(self):
         """

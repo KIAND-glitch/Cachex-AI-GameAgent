@@ -65,7 +65,16 @@ def get_border_diff(board):
     return n_red - n_blue
 
 def get_triangle_diff(board):
-    pass
+    n_red = 0
+    n_blue = 0
+    for coords in board.triangle_coord_list:
+        player = board._data[coords[0][0], coords[0][1]]
+        if board._data[coords[1][0], coords[1][1]] == player and board._data[coords[2][0], coords[2][1]] == player:
+            if player == 1:
+                n_red += 1
+            elif player == 2:
+                n_blue += 1
+    return n_red - n_blue
 
 
 
@@ -74,4 +83,5 @@ def get_score(board, action, player):
     feature1 = get_difference(board)
     feature2 = get_longest_component_diff(board)
     feature3 = get_border_diff(board)
-    return  feature1 + feature2 + 0.5*feature3
+    feature4 = get_triangle_diff(board)
+    return  feature1 + feature2 + 0.1*feature3 + 0.2*feature4

@@ -57,6 +57,16 @@ class Board:
         self._data = zeros((n, n), dtype=int)
         self.first_move = False
         self.stolen = False
+        self.triangle_coord_list = []
+        for i in range(n):
+            for j in range(n-1):
+                if i == 0:
+                    self.triangle_coord_list.append(((i, j), (i+1, j), (i, j+1)))
+                elif i == n-1:
+                    self.triangle_coord_list.append(((i, j+1), (i, j), (i-1, j+1)))
+                else:
+                    self.triangle_coord_list.append(((i, j), (i+1, j), (i, j+1)))
+                    self.triangle_coord_list.append(((i, j+1), (i, j), (i-1, j+1)))
 
     def __getitem__(self, coord):
         """
@@ -222,14 +232,18 @@ class Board:
                     if self._data[neighbor] == 1:
                         action_space_blue.update(self.getNeighbours(degree, node[0], node[1]))
 
-        return (action_space_red, action_space_blue)
+        return (action_space_red, action_space_blue, max_size_red, max_size_blue)
 
-    def get_actions(self):
+    def get_actions(self, player):
         if self.n <= 6:
             degree = 2
         else:
             degree = 1
-        action_space_red, action_space_blue = self.get_actions_base(degree)
+        action_space_red, action_space_blue, max_size_red, max_size_blue = self.get_actions_base(degree)
+        if player == 'red' and max_size_red - max_size_blue > 3 and count_nonzero(self._data) > 10:
+            return action_space_red
+        elif player == 'blue' and max_size_blue - max_size_red > 3 and count_nonzero(self._data) > 10:
+            return action_space_blue
         # print(action_space)
         return list([*action_space_red, *action_space_blue])
 
@@ -246,15 +260,19 @@ class Board:
 
         if player == 'red':
             if (count_nonzero(self._data) == 1 and self.stolen) or (count_nonzero(self._data) == 2 and not self.stolen):
-                _, action_space_blue = self.get_actions_base(1)
+                _, action_space_blue, _, _ = self.get_actions_base(1)
                 return action_space_blue
-            action_space_red, action_space_blue = self.get_actions_base(degree)
+            action_space_red, action_space_blue, max_size_red, max_size_blue = self.get_actions_base(degree)
+            if max_size_red - max_size_blue > 3 and count_nonzero(self._data) > 10:
+                return list(action_space_red)
             return list(OrderedDict.fromkeys([*list(action_space_blue), *list(action_space_red)]))
         else:
             if (count_nonzero(self._data) == 2 and self.stolen) or (count_nonzero(self._data) == 1 and not self.stolen):
-                action_space_red, _ = self.get_actions_base(1)
+                action_space_red, _, _, _ = self.get_actions_base(1)
                 return action_space_red
-            action_space_red, action_space_blue = self.get_actions_base(degree)
+            action_space_red, action_space_blue, max_size_red, max_size_blue = self.get_actions_base(degree)
+            if max_size_blue - max_size_red > 3 and count_nonzero(self._data) > 10:
+                return list(action_space_blue)
             return list(OrderedDict.fromkeys([*list(action_space_red), *list(action_space_blue)]))
     
         
