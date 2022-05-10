@@ -56,6 +56,26 @@ class Player:
         print(action_space)
         best_action = None
 
+
+        if self.game_time:
+            # if with the last 1 seconds of the game play compeletly random moves from the action space
+            if self.game_time >= (self.n*self.n) - 0.5:
+                move_end_time = time.time()
+                self.game_time = update_time(self.game_time, move_start_time, move_end_time)
+                print("players game time", self.game_time)
+                best_action = choice(action_space)
+                print("time rem less than 0.5, playigng random")
+                return ("PLACE", int(best_action[0]), int(best_action[1]))
+
+            if self.game_time >= (self.n * self.n) * (4/5) and self.depth >= 2:
+                print("dec depth by 1 since exceed 4/5")
+                self.depth -= 1
+
+            if self.game_time >= (self.n * self.n) * (9/10) and self.depth >= 1:
+                print("dec depth by 1 since exceed 9/10")
+                self.depth -= 1
+
+
         if self.player == "red":
             best_score = -np.inf
         else:

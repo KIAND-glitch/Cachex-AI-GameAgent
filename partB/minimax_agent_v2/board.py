@@ -249,9 +249,9 @@ class Board:
             degree = 1
         action_space_red, action_space_blue, max_size_red, max_size_blue = self.get_actions_base(degree)
         if player == 'red' and max_size_red - max_size_blue > 3 and count_nonzero(self._data) > 10:
-            return action_space_red
+            return list(action_space_red)
         elif player == 'blue' and max_size_blue - max_size_red > 3 and count_nonzero(self._data) > 10:
-            return action_space_blue
+            return list(action_space_blue)
         # print(action_space)
         return list([*action_space_red, *action_space_blue])
 
@@ -269,7 +269,7 @@ class Board:
         if player == 'red':
             if (count_nonzero(self._data) == 1 and self.stolen) or (count_nonzero(self._data) == 2 and not self.stolen):
                 _, action_space_blue, _, _ = self.get_actions_base(1)
-                return action_space_blue
+                return list(action_space_blue)
             action_space_red, action_space_blue, max_size_red, max_size_blue = self.get_actions_base(degree)
             if max_size_red - max_size_blue > 3 and count_nonzero(self._data) > 10:
                 return list(action_space_red)
@@ -277,7 +277,7 @@ class Board:
         else:
             if (count_nonzero(self._data) == 2 and self.stolen) or (count_nonzero(self._data) == 1 and not self.stolen):
                 action_space_red, _, _, _ = self.get_actions_base(1)
-                return action_space_red
+                return list(action_space_red)
             action_space_red, action_space_blue, max_size_red, max_size_blue = self.get_actions_base(degree)
             if max_size_blue - max_size_red > 3 and count_nonzero(self._data) > 10:
                 return list(action_space_blue)

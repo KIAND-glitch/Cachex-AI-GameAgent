@@ -111,4 +111,5 @@ def get_score(board, action, player):
     feature2 = get_longest_component_diff(board)
     feature3 = get_border_diff(board)
     feature4 = get_triangle_diff(board)
-    return  feature1 + feature2 + 0.1*feature3 + 0.2*feature4
+    #return  feature1 + feature2 + 0.1*feature3 + 0.2*feature4
+    return feature1 + 2 * feature2 + 0.1 * feature3 + 0.2 * feature4
