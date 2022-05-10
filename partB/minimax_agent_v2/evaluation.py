@@ -64,10 +64,35 @@ def get_border_diff(board):
             n_blue += 1
     return n_red - n_blue
 
-def get_triangle_diff(board):
-    pass
+def get_triangle_diff_kian(board):
+    red_triangles = 0
+    blue_triangles = 0
+    upward_visited = []
+    downward_visited = []
+    # upward triangles
+    for i in range(board.n - 1):
+        for j in range(board.n - 1):
+            if((i,j) not in upward_visited):
+                if board._data[i, j] == 1 and board._data[i, j+1] == 1 and board._data[i+1, j] == 1:
+                    upward_visited.extend([(i, j),(i, j+1),(i+1, j)])
+                    red_triangles += 1
+                if board._data[i, j] == 2 and board._data[i, j+1] == 2 and board._data[i+1, j] == 2:
+                    upward_visited.extend([(i, j),(i, j+1),(i+1, j)])
+                    blue_triangles += 1
 
+    # downward triangles
+    for i in range(board.n - 1, 0, -1):
+        for j in range(board.n - 1, 0, -1):
+            if ((i, j) not in downward_visited):
+                if board._data[i, j] == 1 and board._data[i, j-1] == 1 and board._data[i-1, j] == 1:
+                    downward_visited.extend([(i, j),(i, j+1),(i+1, j)])
+                    red_triangles += 1
+                if board._data[i, j] == 2 and board._data[i, j-1] == 2 and board._data[i-1, j] == 2:
+                    downward_visited.extend([(i, j),(i, j+1),(i+1, j)])
+                    blue_triangles += 1
 
+    print("red triangles",red_triangles)
+    print("blue triangles", blue_triangles)
 
 
 def get_score(board, action, player):

@@ -23,6 +23,7 @@ class Player:
         Called at the beginning of your turn. Based on the current state
         of the game, select an action to play.
         """
+
         row = input("row:")
         col = input("col:")
         return ("PLACE", int(row), int(col))
@@ -53,3 +54,5 @@ class Player:
 
         if action[0] == "PLACE":
             self.board.place(player, action[1:])
+
+
