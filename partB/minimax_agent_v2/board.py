@@ -175,7 +175,6 @@ class Board:
         for coord in captured:
             self._data[coord] = _SWAP_PLAYER[player]
 
-
     def _coord_neighbours(self, coord):
         """
         Returns (within-bounds) neighbouring coordinates for given coord.
@@ -264,8 +263,6 @@ class Board:
         else:
             degree = 1
 
-        
-
         if player == 'red':
             if (count_nonzero(self._data) == 1 and self.stolen) or (count_nonzero(self._data) == 2 and not self.stolen):
                 _, action_space_blue, _, _ = self.get_actions_base(1)
@@ -282,8 +279,7 @@ class Board:
             if max_size_blue - max_size_red > 3 and count_nonzero(self._data) > 10:
                 return list(action_space_blue)
             return list(OrderedDict.fromkeys([*list(action_space_red), *list(action_space_blue)]))
-    
-        
+
     def getNeighbours(self, degree, row, column):
         new_neighbours = set()
         if degree == 1:
